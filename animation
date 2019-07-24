@@ -1,1 +1,251 @@
-test
+// draw onto feedback loop, designed by Xavierseb 2019
+
+// bezier control points coordinates (x0,x1,x2,x3) and (y0,y1,y2,y3)
+// font char is drawn by bezier spline with control points at (x0,y0),(x1,y1),(x2,y2),(x3,y3)
+// todo: add flip/rotate/mirror/skewitalic
+// vec4( start_point, control_point_1, control_point_2, end_point)
+#define a0_x vec4(.75,-1.32,-1.44,.75)
+#define a0_y vec4(.77,1.95,-2.28,-.59)
+#define a1_x vec4(.75,1.05,.32,1.)
+#define a1_y vec4(-.59,1.82,.78,-1.)
+#define b0_x vec4(-1.,.3,-1.66,-.8)
+#define b0_y vec4(.2,3.3,5.,-1.)*2.
+#define b1_x vec4(-1.,.6,2.,-.8)
+#define b1_y vec4(.2,2.6,-1.6,-1.)
+#define c0_x vec4(.8,-.5,-2.1,.94)
+#define c0_y vec4(.8,1.8,-1.8,-.8)
+#define c1_x vec4(.7,-.5,-2.1,.94)
+#define c1_y vec4(.8,1.8,-1.8,-.8)
+#define d0_x vec4(.64,-.8,-1.8,.74)
+#define d0_y vec4(.78,1.9,-1.7,-.86)
+#define d1_x vec4(.74,1.3,-.63,1.)
+#define d1_y vec4(-.43,4.8,3.8,0.)*2.
+#define e0_x vec4(-.8,2.8,-.65,-.8)
+#define e0_y vec4(0.,-.27,2.3,-.1)
+#define e1_x vec4(-.8,-.82,-.92,1.)
+#define e1_y vec4(-.1,-.32,-1.2,-1.)
+#define f0_x vec4(-.44,2.1,-1.,0.)*2.
+#define f0_y vec4(.44,4.4,4.,-2.4)*2.
+#define f1_x vec4(0.,.6,-1.24,.62)*2.
+#define f1_y vec4(-2.4,1.28,.56,.6)*2.
+#define g0_x vec4(.9,-.4,-2.3,.84)
+#define g0_y vec4(.34,2.4,-1.8,-.99)
+#define g1_x vec4(.9,1.,-14.1,-10.)
+#define g1_y vec4(0.,-4.7,-3.5,-.9)*2.
+#define h0_x vec4(-1.,.9,-1.1,-.75)
+#define h0_y vec4(.43,4.5,3.4,-.5)*2.
+#define h1_x vec4(-.75,-.24,.78,.94)
+#define h1_y vec4(-1.,3.7,-1.35,-1.)
+#define i0_x vec4(0.,-.14,.19,.64)
+#define i0_y vec4(.8,-.48,-1.07,-1.)
+#define i1_x vec4(-.05,.43,-.34,.07)
+#define i1_y vec4(2.88,2.71,2.67,2.86)
+#define j0_x vec4(0.,-.3,-14.1,-10.)
+#define j0_y vec4(.5,-6.19,-1.7,-2.5)*2.
+#define j1_x vec4(-.05,.43,-.34,.03)
+#define j1_y vec4(2.88,2.71,2.67,2.96)
+#define k0_x vec4(-.94,.58,-1.1,-.94)
+#define k0_y vec4(.6,4.35,3.6,-.7)*2.
+#define k1_x vec4(.4,-2.4,.3,.8)
+#define k1_y vec4(.8,0.,0.,-1.)
+#define l0_x vec4(-.4,1.,.3,-.17)
+#define l0_y vec4(-.5,1.2,3.8,2.8)*2.
+#define l1_x vec4(-.17,-.8,.38,.84)
+#define l1_y vec4(2.8,1.8,-1.,-.5)*2.
+#define m0_x vec4(-.9,-.9,-.33,0.)
+#define m0_y vec4(-1.,.912,1.6,-.7)
+#define m1_x vec4(0.,.33,.9,.9)
+#define m1_y vec4(-.7,1.6,.912,-1.)
+#define n0_x vec4(-1.07,-.64,-.9,-.76)
+#define n0_y vec4(.35,.93,.85,-1.)
+#define n1_x vec4(-.75,-.9,.7,.94)
+#define n1_y vec4(-1.,.85,1.9,-1.)
+#define o0_x vec4(0.,-1.1,-1.1,0.)
+#define o0_y vec4(1.,.82,-.8,-1.)
+#define o1_x vec4(0.,1.1,1.1,0.)
+#define o1_y vec4(-1.,-.8,.82,1.)
+#define p0_x vec4(-1,-.43,-.58,-1.3)
+#define p0_y vec4(.43,1.5,-1.9,-3.)*2.
+#define p1_x vec4(-.7,.83,1.75,-.7)
+#define p1_y vec4(.8,1.9,-1.75,-.8)
+#define q0_x vec4(.7,-.83,-1.75,0.)
+#define q0_y vec4(.8,1.9,-1.75,-.8)
+#define q1_x vec4(.7,-1.5,-1.74,4.13)
+#define q1_y vec4(.26,-2.7,-4.76,-2.5)*2.
+#define r0_x vec4(-.88,-.28,-.43,-.5)
+#define r0_y vec4(.86,1.5,-.67,-1.)
+#define r1_x vec4(-.5,-.54,.22,.9)
+#define r1_y vec4(-1.,1.,1.,.8)
+#define s0_x vec4(.78,-.7,-1.5,0.)
+#define s0_y vec4(.88,1.34,.55,0.)
+#define s1_x vec4(0.,1.5,.67,-.9)
+#define s1_y vec4(0.,-.55,-1.35,-.8)
+#define t0_x vec4(-.55,.35,-1.37,.76)
+#define t0_y vec4(3.,1.16,-1.1,-1.)*2.
+#define t1_x vec4(-1.,-7.7,-1.4,4.5)
+#define t1_y vec4(2.84,2.4,1.7,2.)*2.
+#define u0_x vec4(-.9,-1.1,1.,.72)
+#define u0_y vec4(.9,-1.6,-1.7,.9)
+#define u1_x vec4(.72,.7,1.,1.4)
+#define u1_y vec4(.9,-1.6,-1.,-.77)
+#define v0_x vec4(-1.,-.83,-.236,0.)
+#define v0_y vec4(.88,1.5,-.73,-1.)
+#define v1_x vec4(0.,1.55,-.25,1.)
+#define v1_y vec4(-1.,1.8,.9,.65)
+#define w0_x vec4(-.9,-1.2,-.33,0.)
+#define w0_y vec4(1.,-.912,-1.6,.7)
+#define w1_x vec4(0.,.33,.9,.9)
+#define w1_y vec4(.7,-1.6,-.912,1.)
+#define x0_x vec4(.83,.25,-.3,-1.)
+#define x0_y vec4(.95,.6,-.5,-1.)
+#define x1_x vec4(-.9,.48,-.43,1.)
+#define x1_y vec4(.87,.35,-.5,-1.)
+#define y0_x vec4(-.9,-.2,.9,.9)
+#define y0_y vec4(.9,-2.9,0.,.9)
+#define y1_x vec4(.9,-.37,-14.1,-10.)
+#define y1_y vec4(.2,-4.7,-3.5,-.9)*2.
+#define z0_x vec4(-.9,1.1,1.3,0.)
+#define z0_y vec4(.9,.9,1.5,0.)
+#define z1_x vec4(0.,-1.3,-1.1,.9)
+#define z1_y vec4(0.,-1.5,-.9,-.9)
+
+#define love0_x vec4(0.,-.45,-2.,0.)*2.
+#define love0_y vec4(.58,1.4,1.,-1.)*3.
+#define love1_x vec4(0.,2.,.45,0.)*2.
+#define love1_y vec4(-1.,1.,1.4,.58)*3.
+#define qu0_x vec4(-.66,2.74,-.3,-.05)
+#define qu0_y vec4(2.9,3.35,1.6,.58)*2.
+#define qu1_x vec4(-.05,.43,-.34,.03)
+#define qu1_y vec4(-.42,-.59,-.63,-.44)
+
+// include scale and translate of raw chars which are by default 
+#define draw(a,b,c,d) a/2.+.5,b/2.+1.35,c/2.+.5,d/2.+1.35
+
+// combine x and y coordinates of 1st and 2nd curves needed to draw the char
+#define A draw(a0_x,a0_y,a1_x,a1_y),
+#define B draw(b0_x,b0_y,b1_x,b1_y),
+#define C draw(c0_x,c0_y,c1_x,c1_y),
+#define D draw(d0_x,d0_y,d1_x,d1_y),
+#define E draw(e0_x,e0_y,e1_x,e1_y),
+#define F draw(f0_x,f0_y,f1_x,f1_y),
+#define G draw(g0_x,g0_y,g1_x,g1_y),
+#define H draw(h0_x,h0_y,h1_x,h1_y),
+#define I draw(i0_x,i0_y,i1_x,i1_y),
+#define J draw(j0_x,j0_y,j1_x,j1_y),
+#define K draw(k0_x,k0_y,k1_x,k1_y),
+#define L draw(l0_x,l0_y,l1_x,l1_y),
+#define M draw(m0_x,m0_y,m1_x,m1_y),
+#define N draw(n0_x,n0_y,n1_x,n1_y),
+#define O draw(o0_x,o0_y,o1_x,o1_y),
+#define P draw(p0_x,p0_y,p1_x,p1_y),
+#define Q draw(q0_x,q0_y,q1_x,q1_y),
+#define R draw(r0_x,r0_y,r1_x,r1_y),
+#define S draw(s0_x,s0_y,s1_x,s1_y),
+#define T draw(t0_x,t0_y,t1_x,t1_y),
+#define U draw(u0_x,u0_y,u1_x,u1_y),
+#define V draw(v0_x,v0_y,v1_x,v1_y),
+#define W draw(w0_x,w0_y,w1_x,w1_y),
+#define X draw(x0_x,x0_y,x1_x,x1_y),
+#define Y draw(y0_x,y0_y,y1_x,y1_y),
+#define Z draw(z0_x,z0_y,z1_x,z1_y),
+#define QU draw(qu0_x,qu0_y,qu1_x,qu1_y),
+#define LOVE draw(love0_x,love0_y,love1_x,love1_y),
+#define SP draw(vec4(1000.),vec4(1000.),vec4(1000.),vec4(1000.)),
+#define END draw(vec4(1000.),vec4(1000.),vec4(1000.),vec4(1000.))
+
+// randomizing to emulate messy handwriting
+#define rnd(p) vec4(.22*fract(sin(p/1.1)*100000.0),.582*fract(sin(p/1.2)*100000.0),.582*fract(sin(p/1.3)*100000.0),.2*fract(sin(p/1.4)*100000.0))
+#define rnd1(p) vec4(.2*fract(sin(p/1.5)*100000.0),.5842*fract(sin(p/1.6)*100000.0),.5842*fract(sin(p/1.7)*100000.0),.2*fract(sin(p/1.8)*100000.0))
+
+// how many chars fit across screen, change this and then adjust chars[] to corresponding size = fN*4*numLines+4
+#define fN 12.
+
+// 2 bezier curves for each character, 
+// e.g. for the letter a, 
+// x coords of control points are vec4(.75,-1.32,-1.44,.75) = x-coords of curve first part of 'a', vec4(.77,1.95,-2.28,-.59) = x-coords of second curve to draw 'a'
+// y coords are vec4(.75,1.05,.32,1.), vec4(-.59,1.82,.78,-1.), ditto
+// note: combining mismatched letters can make other interesting shapes.
+const float numLines=3.; // 3 lines below
+ vec4 chars[] = vec4[int(fN)*4*int(numLines) +4] ( 
+    D E A R SP  T R A C E Y SP E M I N SP
+    I SP H A V E SP A SP Q U E S T I O N 
+    H A V E SP A SP N I C E SP D A Y LOVE SP
+    END 
+);
+
+vec2 getPos(int pos, int density, float microstep, float messiness)
+{
+    // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn, staggered with factor iFrame%297
+    float p = float(pos+ iFrame-iFrame%297)+.5;
+    vec4 x = chars[2*pos]+rnd(p) * messiness;
+    vec4 y = chars[2*pos+1]+rnd1(p) * messiness;
+    
+    float t = (float(iFrame%density)+microstep)/float(density);
+    float t1 = 1.-t; 
+    // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]
+    float xt = t1*(t1*(t1*x[0]+t*x[1])+t*(t1*x[1]+t*x[2]))+t*(t1*(t1*x[1]+t*x[2])+t*(t1*x[2]+t*x[3]));
+    float yt = t1*(t1*(t1*y[0]+t*y[1])+t*(t1*y[1]+t*y[2]))+t*(t1*(t1*y[1]+t*y[2])+t*(t1*y[2]+t*y[3]));
+    
+    return vec2(xt,yt)/fN;
+}
+
+// calculate rate of change of length so as to plot more densely when rate of change is higher 
+// note, since the derivative is at a specific point, the density of dots drawn is only accurate close to the point where the derivative is calculated 
+// so you have to hand tune the variables accordingly.
+float derivative(int pos, int density, float microstep,float messiness )
+{
+    // character drawn exactly the same as the getPos() function
+    float p = float(pos+ iFrame-iFrame%297)+.5;
+    vec4 x = chars[2*pos]+rnd(p) * messiness;
+    vec4 y = chars[2*pos+1]+rnd1(p) * messiness;
+    float t = (float(iFrame%density)+microstep)/float(density);
+    float t1 = 1.-t;
+    // derivative of x(t) and y(t) with respect to t
+    float dxdt = t1* ( 2.*x[1]+x[2]*(1.+2.*t-t*t)+x[3] + t1*(-3.*x[0]+x[1]*(1.-4.*t)+2.*t*x[2] ) ) - t*(2.*x[1]+x[2]*(1.+t)+x[3]) ;
+    float dydt = t1* ( 2.*y[1]+y[2]*(1.+2.*t-t*t)+y[3] + t1*(-3.*y[0]+y[1]*(1.-4.*t)+2.*t*y[2] ) ) - t*(2.*y[1]+y[2]*(1.+t)+y[3] );
+    float rate = pow(dxdt*dxdt+dydt*dydt, .5);
+    if ( rate>0. ) return .5/rate;
+    else return 1.;
+}
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+    vec2 screen = fragCoord.xy/iResolution.xy;
+    // density of dots drawn 1 - 60 this is related to fps, when adjusting this, adjust opacity too!! 
+    // expect higher fps monitors to need density set higher to slow down drawing animation pace, not tested on high fps monitor yet!
+    int density = 12;
+    float messiness = .79; // 0.0 - 2.0
+
+    // jump from char to char (after drawing all the points of char, jump to next char)
+    int hPos = (iFrame%(int(fN)*2*density))/density;
+    // 
+    int textPos = (iFrame%(int(fN*numLines)*2*density))/density;    //vec2 xy = getPos(textPos)*iResolution.xy+ vec2(iResolution.x*float(textPos)/N_float, iResolution.y*2./N_float);
+
+    // color = 0 to 1. for each r,g,b  opacity is ranged 0. to 1.
+    float thickness = .12;
+    float saturation=.425;
+    // adjust opacity and density together to find sweet spot
+    float opacity = 2.;
+    vec3 color = vec3(0.,.5,.6)*saturation;
+    
+    // every time you draw a dot for a char, work out derivative at that point to fill in gaps with density of dots according to derivative
+    float cstep=.5;
+    cstep=derivative(textPos, density, 0.,messiness);
+    if(cstep<.05) cstep=.05;
+    float spot=0.;
+    // draw dot and fill in dots at density matching derivative
+    for (float mstep=0.; mstep<1.; mstep+=cstep) {
+        vec2 xy = getPos(textPos,density,mstep,messiness) *iResolution.xy
+					+ vec2(iResolution.x*float(hPos/2)/fN, iResolution.y*2./fN);
+    	spot += (thickness-clamp(length((fragCoord.xy-xy)/iResolution.x*fN),0.,thickness)) *opacity;
+    }
+    vec4 blob = spot*vec4(1.-color,1);
+ 
+    // vertical page feed
+    float page_feed = 4.;
+    if(iFrame%(int(fN)*2*density)==0) screen.y -= (page_feed/fN);
+    
+    if(iFrame%(int(fN)*2*density*int(numLines))==0) fragColor=vec4(0.,0.,0.,1.);
+    
+    else fragColor = blob + texture(iChannel0,screen);// * vec3(0.998,.995,.985); // blob+buffer
+}
+
