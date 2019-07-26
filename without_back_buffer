@@ -148,6 +148,7 @@
 #define X draw(x0_x,x0_y,x1_x,x1_y),
 #define Y draw(y0_x,y0_y,y1_x,y1_y),
 #define Z draw(z0_x,z0_y,z1_x,z1_y),
+#define DOT draw(vec4(0),vec4(0),vec4(0),vec4(0)),
 #define QU draw(qu0_x,qu0_y,qu1_x,qu1_y),
 #define _S draw(s0_x,s0_y*3.,s1_x,s1_y*3.),
 #define LOVE draw(love0_x,love0_y,love1_x,love1_y),
@@ -173,13 +174,16 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 // y coords are vec4(.75,1.05,.32,1.), vec4(-.59,1.82,.78,-1.), ditto
 // note: combining mismatched letters can make other interesting shapes.
 // number of chars
-#define fN 28
-vec4 chars[] = vec4[fN*4] ( 
-//    _S O R A Y A LOVE _S		// final S to join seamlessly with first S
-    I I N T E R E S T I N G     // display first char longer by doubling up
-    M O R P H I N G 
-    O F 
-    T E X T SP					
+#define fN  34 // 10
+vec4 chars[] = vec4[ fN *4 ] ( 
+ 
+    //_S DOT O R A Y A LOVE _S		// final S to join seamlessly with first S
+    
+    SP DOT I N T E R E S T I N G DOT    // display first char longer by doubling up
+    M O R P H I N G DOT
+    O F DOT
+    T E X T DOT SP SP					
+    
     END
 );
 
