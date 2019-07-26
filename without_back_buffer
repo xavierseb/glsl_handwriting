@@ -226,6 +226,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec2 p = (8.*fragCoord.xy-iResolution.xy*4.)/iResolution.y;    
  	float d = 10.;  
     float m = fract(float(fr)/100.);
+    // find point along parametric path that corresponds to current fragCoord pos (x,y)
+    // check both curves that draw the char
     for(float i1=0.0; i1<1.0; i1+=0.015) {//.015 60fps    .01=45fps
         int frame = (fr/100) %(fN-2);
         d=min(d,distance(p,            func(i1, frame*2  ,  m) ));
