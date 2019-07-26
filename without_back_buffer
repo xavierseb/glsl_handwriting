@@ -167,8 +167,8 @@
 // note: combining mismatched letters can make other interesting shapes.
 const float numLines=3.; // 3 lines below
  vec4 chars[] = vec4[int(fN)*4*int(numLines) +4] ( 
-    A B C D E  F G H I J K L M N O P Q LOVE
-    SP H A V E SP A SP Q U E S T I O N 
+    S O R A Y A LOVE S I J K L M N O P Q LOVE
+    R S T U V W X Y Z QU LOVE SP H A V E  
     H A V E SP A SP N I C E SP D A Y LOVE SP
     END 
 );
@@ -199,23 +199,22 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
     // color = 0 to 1. for each r,g,b  opacity is ranged 0. to 1.
     float thickness = .12;
-    float saturation=.425;
+    float saturation=.825;
     // adjust opacity and density together to find sweet spot
     float opacity = 2.;
-    vec3 color = vec3(0.,.5,.6)*saturation;
+    vec3 color = vec3(0.9,.5,.6)*saturation;
     
     vec2 p = (10.*fragCoord.xy-iResolution.xy)/iResolution.y+vec2(-6.5,-5.);    
  	float d = 10.;  
     float m = fract(float(iFrame)/100.);
-    for(float i=0.0; i<1.0; i+=.01) {
-        int frame = (iFrame/100) %17;
+    for(float i=0.0; i<1.0; i+=.02) {
+        int frame = (iFrame/100) %7;
         d=min(d,distance(p,            func(i, frame*2  ,  m) ));
     	if(d>.01) d=min(d,distance(p,  func(i, frame*2+1 , m) ));
     }
-	vec3 col = mix( vec3(0.), vec3(1.0), smoothstep(0.05,.1,d) );
+	vec3 col = mix( 1.-vec3(0.,0.,0.), color, smoothstep(0.05,.1,d) );
 	fragColor = vec4(col,1.0);
 }
-
 /*
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 	vec2 p = (10.*fragCoord.xy-iResolution.xy)/iResolution.y+vec2(-6.5,-5.);    
