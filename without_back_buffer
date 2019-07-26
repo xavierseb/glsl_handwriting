@@ -183,11 +183,29 @@ vec4 interpolate(vec4 from, vec4 to, float degree)
     return vec4(from + (to-from)*degree);
 }
 
-vec2 func(float t, int pos, float anim)
+// calculate rate of change of length so as to plot more densely when rate of change is higher 
+// note, since the derivative is at a specific point, the density of dots drawn is only accurate close to the point where the derivative is calculated 
+// so you have to hand tune the variables accordingly.
+float derivative(float t, int pos, float point)//, int density, float microstep )
 {
     // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn, staggered with factor iFrame%297
-    vec4 x = interpolate(chars[2*pos], chars[2*pos+4], anim);//chars[2*pos];//2*pos]+rnd(p) * messiness;
-    vec4 y = interpolate(chars[2*pos+1]+.5, chars[2*pos+5]+.5, anim);//2*pos+1]+rnd1(p) * messiness;
+    vec4 x = interpolate(chars[2*pos], chars[2*pos+4], point);//chars[2*pos];//2*pos]+rnd(p) * messiness;
+    vec4 y = interpolate(chars[2*pos+1]+.5, chars[2*pos+5]+.5, point);//2*pos+1]+rnd1(p) * messiness;
+    //float t = (float(iFrame%density)+microstep)/float(density);
+    float t1 = 1.-t;
+    // derivative of x(t) and y(t) with respect to t
+    float dxdt = t1* ( 2.*x[1]+x[2]*(1.+2.*t-t*t)+x[3] + t1*(-3.*x[0]+x[1]*(1.-4.*t)+2.*t*x[2] ) ) - t*(2.*x[1]+x[2]*(1.+t)+x[3]) ;
+    float dydt = t1* ( 2.*y[1]+y[2]*(1.+2.*t-t*t)+y[3] + t1*(-3.*y[0]+y[1]*(1.-4.*t)+2.*t*y[2] ) ) - t*(2.*y[1]+y[2]*(1.+t)+y[3] );
+    float rate = pow(dxdt*dxdt+dydt*dydt, .5);
+    if ( rate>0. ) return .1/rate;
+    else return .51;
+}
+
+vec2 func(float t, int pos, float point)
+{
+    // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn, staggered with factor iFrame%297
+    vec4 x = interpolate(chars[2*pos], chars[2*pos+4], point);//chars[2*pos];//2*pos]+rnd(p) * messiness;
+    vec4 y = interpolate(chars[2*pos+1]+.5, chars[2*pos+5]+.5, point);//2*pos+1]+rnd1(p) * messiness;
     
     float t1 = 1.-t; 
     // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]
@@ -200,18 +218,19 @@ vec2 func(float t, int pos, float anim)
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     // color = 0 to 1. for each r,g,b  opacity is ranged 0. to 1.
     float thickness = .12;
-    float saturation=.825;
+    float saturation=.725;
     // adjust opacity and density together to find sweet spot
     float opacity = 2.;
-    vec3 color = vec3(0.9,.5,.6)*saturation;
+    vec3 color = vec3(0.9,.05,.06)*saturation;
     
     vec2 p = (10.*fragCoord.xy-iResolution.xy)/iResolution.y+vec2(-6.5,-5.);    
  	float d = 10.;  
     float m = fract(float(iFrame)/100.);
-    for(float i=0.0; i<1.0; i+=.02) {
+    for(float i=0.0; i<1.0; i+=0.001) {//.02
         int frame = (iFrame/100) %(fN-1);
         d=min(d,distance(p,            func(i, frame*2  ,  m) ));
     	if(d>.01) d=min(d,distance(p,  func(i, frame*2+1 , m) ));
+        i+=min(derivative(i,frame*2,m), derivative(i,frame*2+1,m));
     }
 	vec3 col = mix( 1.-vec3(0.,0.,0.), color, smoothstep(0.05,.1,d) );
 	fragColor = vec4(col,1.0);
