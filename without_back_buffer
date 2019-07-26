@@ -1,8 +1,12 @@
+vec4 interpolate(vec4 from, vec4 to, float degree) 
+{
+	return from + (to-from)*degree;
+
 vec2 char_fn(float t)
 {
     // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn, staggered with factor iFrame%297
-    vec4 x = chars[20];//2*pos]+rnd(p) * messiness;
-    vec4 y = chars[21]+.5;//2*pos+1]+rnd1(p) * messiness;
+    vec4 x = interpolate(chars[2*pos], chars[2*pos+2]);//+rnd(p) * messiness;
+    vec4 y = interpolate(chars[2*pos+3]+.5, chars[2*pos+3]+.5);//+rnd1(p) * messiness;
     
     float t1 = 1.-t; 
     // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]
