@@ -1,4 +1,4 @@
-// handwriting , Xavierseb 2019
+// handwriting morphing, Xavierseb 2019
 
 // bezier control points coordinates (x0,x1,x2,x3) and (y0,y1,y2,y3)
 // font char is drawn by bezier spline with control points at (x0,y0),(x1,y1),(x2,y2),(x3,y3)
@@ -149,6 +149,7 @@
 #define Y draw(y0_x,y0_y,y1_x,y1_y),
 #define Z draw(z0_x,z0_y,z1_x,z1_y),
 #define QU draw(qu0_x,qu0_y,qu1_x,qu1_y),
+#define _S draw(s0_x,s0_y*3.,s1_x,s1_y*3.),
 #define LOVE draw(love0_x,love0_y,love1_x,love1_y),
 #define SP draw(vec4(1000.),vec4(1000.),vec4(1000.),vec4(1000.)),
 #define END draw(vec4(1000.),vec4(1000.),vec4(1000.),vec4(1000.))
@@ -174,7 +175,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 // number of chars
 #define fN 28
 vec4 chars[] = vec4[fN*4] ( 
-//    S O R A Y A LOVE S		// final S to join seamlessly with first S
+//    _S O R A Y A LOVE _S		// final S to join seamlessly with first S
     I I N T E R E S T I N G     // display first char longer by doubling up
     M O R P H I N G 
     O F 
