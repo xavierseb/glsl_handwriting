@@ -174,7 +174,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 // y coords are vec4(.75,1.05,.32,1.), vec4(-.59,1.82,.78,-1.), ditto
 // note: combining mismatched letters can make other interesting shapes.
 // number of chars
-#define fN  34 // 10
+#define fN  34 
+//#define fN 10
 vec4 chars[] = vec4[ fN *4 ] ( 
  
     //_S DOT O R A Y A LOVE _S		// final S to join seamlessly with first S
@@ -184,7 +185,7 @@ vec4 chars[] = vec4[ fN *4 ] (
     O F DOT
     T E X T DOT SP SP					
     
-    END
+    END		// necessary
 );
 
 // calculate rate of change of length so as to plot more densely when rate of change is higher 
