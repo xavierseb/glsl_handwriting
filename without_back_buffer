@@ -226,6 +226,43 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec2 p = (8.*fragCoord.xy-iResolution.xy*4.)/iResolution.y;    
  	float d = 10.;  
     float m = fract(float(fr)/100.);
+    int frame = (fr/100) %(fN-2);
+    for(float i1=0.0; i1<1.0; i1+=0.1) {
+        vec2 h=func(i1, frame*2 , m);
+        if(d>.01) d=min(d,distance(p, h ));
+   
+        // try to spread out dots using derivative
+        //vec2 yd=derivative(i1,frame*2,m);
+        vec2 yd=func(i1+.1, frame*2 , m) -h;
+        float y=length(yd);
+        //if(i1+y<1.0)
+       	for(float k=0.; k<y*11.; k++) {
+        	if (d>.01) d=min(d,distance(p, h));
+            h += yd/y/11.;
+   		}
+    }
+    for(float i1=0.0; i1<1.0; i1+=0.1) {
+        vec2 h=func(i1, frame*2+1 , m);
+        if(d>.01) d=min(d,distance(p, h ));
+   
+        // try to spread out dots using derivative
+        vec2 yd=func(i1+.1,frame*2+1,m) -h;
+        float y=length(yd);
+        //if(i1+y<1.0)
+       	for(float k=0.; k<y*11.; k++) {
+    		if (d>.01) d=min(d,distance(p, h));
+            h += yd/y/11.;
+   		}
+    }
+    
+    /*
+void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+    const int speed=25;
+    int fr = iFrame * speed/10;
+    
+    vec2 p = (8.*fragCoord.xy-iResolution.xy*4.)/iResolution.y;    
+ 	float d = 10.;  
+    float m = fract(float(fr)/100.);
     // find point along parametric path that corresponds to current fragCoord pos (x,y)
     // check both curves that draw the char
     for(float i1=0.0; i1<1.0; i1+=0.015) {//.015 60fps    .01=45fps
@@ -237,7 +274,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 	fragColor = vec4(col,1.0);
 }
 
-/*
+
 // using derivative to try to even out the dots not satisfactory !
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     const int speed=25;
