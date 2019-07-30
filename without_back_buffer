@@ -212,10 +212,14 @@ vec2 func(float t, int pos, float point)
     vec4 x = mix(chars[2*pos], chars[2*pos+4], point);//chars[2*pos];//2*pos]+rnd(p) * messiness;
     vec4 y = mix(chars[2*pos+1]+.5, chars[2*pos+5]+.5, point);//2*pos+1]+rnd1(p) * messiness;
     
+    //#define f(u,v) (t*u+t1*v)
+
     float t1 = 1.-t; 
     // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]
     float xt = t1*(t1*(t1*x[0]+t*x[1])+t*(t1*x[1]+t*x[2]))+t*(t1*(t1*x[1]+t*x[2])+t*(t1*x[2]+t*x[3]));
     float yt = t1*(t1*(t1*y[0]+t*y[1])+t*(t1*y[1]+t*y[2]))+t*(t1*(t1*y[1]+t*y[2])+t*(t1*y[2]+t*y[3]));
+    //float xt = f(f(f(x[0],x[1]),f(x[1],x[2])),f(f(x[1],x[2]),f(x[2],x[3])));
+    //float yt = f(f(f(y[0],y[1]),f(y[1],y[2])),f(f(y[1],y[2]),f(y[2],y[3])));
     
     return vec2(xt,yt);
 }
