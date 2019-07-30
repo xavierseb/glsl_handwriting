@@ -218,11 +218,10 @@ vec2 func(float t, int pos, float point)
     
     //optimized , can this be reduced further?
     vec4 n = vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
-    x *= n;
-    y *= n;
     
     //return vec2(x[0]+x[1]+x[2]+x[3],y[0]+y[1]+y[2]+y[3]);
-    return vec2(dot(x,ONE), dot(y,ONE));
+    return vec2(dot(x*n,ONE), dot(y*n,ONE));
+    
     
     // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]
     // original 
