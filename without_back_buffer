@@ -206,7 +206,6 @@ float derivative(float t, int pos, float point)//, int density, float microstep 
     else return .1;
 }
 
-const vec4 ONE = vec4(1.);
 vec2 func(float t, int pos, float point)
 {
     // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn
@@ -220,7 +219,7 @@ vec2 func(float t, int pos, float point)
     vec4 n = vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
     
     //return vec2(x[0]+x[1]+x[2]+x[3],y[0]+y[1]+y[2]+y[3]);
-    return vec2(dot(x*n,ONE), dot(y*n,ONE));
+    return vec2(dot(x,n), dot(y,n));
     
     
     // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]
