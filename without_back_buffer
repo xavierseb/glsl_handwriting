@@ -206,21 +206,18 @@ float derivative(float t, int pos, float point)//, int density, float microstep 
     else return .1;
 }
 
-vec2 func(float t, int pos, float point)
-{
-    // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn
-    vec4 x = mix(chars[2*pos], chars[2*pos+4], point);
-    vec4 y = mix(chars[2*pos+1]+.5, chars[2*pos+5]+.5, point);
+vec2 getPos(float t, float point, vec4 c1, vec4 c2, vec4 c3, vec4 c4)
+{    
+    vec4 x = mix(c1,c2,point);
+    vec4 y = mix(c3,c4,point);
     
     float t1 = 1.-t; 
-    
-    
+       
     //optimized , can this be reduced further?
     vec4 n = vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
     
     //return vec2(x[0]+x[1]+x[2]+x[3],y[0]+y[1]+y[2]+y[3]);
     return vec2(dot(x,n), dot(y,n));
-    
     
     // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]
     // original 
@@ -233,9 +230,9 @@ vec2 func(float t, int pos, float point)
 
     // return  vec2(xt,yt);
 }
-
+    
+const int speed=25;
 void mainImage2( out vec4 fragColor, in vec2 fragCoord ){
-    const int speed=25;
     int fr = iFrame * speed/10;
     
     vec2 p = (8.*fragCoord.xy-iResolution.xy*4.)/iResolution.y;    
@@ -253,29 +250,38 @@ void mainImage2( out vec4 fragColor, in vec2 fragCoord ){
 }
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-    const int speed=25;
     int fr = iFrame * speed/10;
     
     vec2 p = (8.*fragCoord.xy-iResolution.xy*4.)/iResolution.y;    
  	float d = 10.;  
     float m = fract(float(fr)/100.);
     int frame = (fr/100) %(fN-2);
+    // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn
+    vec4 c1 = chars[2*frame*2];
+    vec4 c2 = chars[2*frame*2+4];
+    vec4 c3 = chars[2*frame*2+1]+.5;
+    vec4 c4 = chars[2*frame*2+5]+.5;
+    vec4 c5 = chars[2*(frame*2+1)];
+    vec4 c6 = chars[2*(frame*2+1)+4];
+    vec4 c7 = chars[2*(frame*2+1)+1]+.5;
+    vec4 c8 = chars[2*(frame*2+1)+5]+.5;
+
     for(float i1=0.0; i1<1.0; i1+=0.1) {
-        vec2 h=func(i1, frame*2 , m);
+        vec2 h=getPos(i1,m,c1,c2,c3,c4);
         d=min(d,distance(p, h ));   
         // try to spread out dots
-        vec2 yd=func(i1+.1, frame*2 , m) -h;
+        vec2 yd=getPos(i1+.1,m,c1,c2,c3,c4) -h;
         float y=length(yd)*11.;
         yd/=y;
        	for(float k=0.; k<y; k++) {
-        	//if (d>.01) 
+        	//if (d>.01) // uncomment when using thicker text
                 d=min(d,distance(p, h));
             h += yd;
    		}
         
-        h=func(i1, frame*2+1 , m);
+        h=getPos(i1,m,c5,c6,c7,c8);
         d=min(d,distance(p, h ));   
-        yd=func(i1+.1,frame*2+1,m) -h;
+        yd=getPos(i1+.1,m,c5,c6,c7,c8) -h;
         y=length(yd)*11.;
         yd/=y;
        	for(float k=0.; k<y; k++) {
@@ -285,9 +291,37 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
    		}
     }
     
+	vec3 col = mix( vec3(0.), vec3(1.),  smoothstep(0.07,.12,d) );
+	fragColor = vec4(col,1.0);
+}
+
+/*
+// more accurate, but less efficient
+void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+    int fr = iFrame * speed/10;
+    
+    vec2 p = (8.*fragCoord.xy-iResolution.xy*4.)/iResolution.y;    
+ 	float d = 10.;  
+    float m = fract(float(fr)/100.);
+    int frame = (fr/100) %(fN-2);
+    vec4 c1 = chars[2*frame*2];    
+    vec4 c2 = chars[2*frame*2+4];
+    vec4 c3 = chars[2*frame*2+1]+.5;
+    vec4 c4 = chars[2*frame*2+5]+.5;
+    vec4 c5 = chars[2*(frame*2+1)];
+    vec4 c6 = chars[2*(frame*2+1)+4];
+    vec4 c7 = chars[2*(frame*2+1)+1]+.5;
+    vec4 c8 = chars[2*(frame*2+1)+5]+.5;
+   // find point along parametric path that corresponds to current fragCoord pos (x,y)
+    // check both curves that draw the char
+    for(float i1=0.0; i1<1.0; i1+=0.015) {//.015 60fps    .01=45fps
+        d=min(d,distance(p, getPos(i1,m,c1,c2,c3,c4) ));
+    	if(d>.01) d=min(d,distance(p,getPos(i1,m,c5,c6,c7,c8) ));
+    }
 	vec3 col = mix( vec3(0.), vec3(1.),  smoothstep(0.05,.1,d) );
 	fragColor = vec4(col,1.0);
-}    
+}
+*/
     /*
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     const int speed=25;
