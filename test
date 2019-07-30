@@ -197,7 +197,7 @@ vec4 chars[] = vec4[ fN *4 ] (
 #define COLOR_TYPE 3
 
 //might need to be adjusted depending on the curve
-#define STRIDE 0.035
+#define STRIDE 0.057
 
 #if TYPE == 5
 #undef STRIDE
