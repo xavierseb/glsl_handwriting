@@ -181,16 +181,13 @@ vec2 getPos(float t, vec4 x, vec4 y)
     return vec2(dot(x,n), dot(y,n))/fN;
 }
 
+//#define OTHER_PEN
+#ifdef OTHER_PEN
 // calculate rate of change of length so as to plot more densely when rate of change is higher 
 // note, since the derivative is at a specific point, the density of dots drawn is only accurate close to the point where the derivative is calculated 
 // so you have to hand tune the variables accordingly.
-float derivative(int pos, int density, float microstep,float messiness )
+float derivative(float t, vec4 x, vec4 y )
 {
-    // character drawn exactly the same as the getPos() function
-    float p = float(pos+ iFrame-iFrame%297)+.5;
-    vec4 x = chars[2*pos]+rnd(p) * messiness;
-    vec4 y = chars[2*pos+1]+rnd1(p) * messiness;
-    float t = (float(iFrame%density)+microstep)/float(density);
     float t1 = 1.-t;
     // derivative of x(t) and y(t) with respect to t
     float dxdt = t1* ( 2.*x[1]+x[2]*(1.+2.*t-t*t)+x[3] + t1*(-3.*x[0]+x[1]*(1.-4.*t)+2.*t*x[2] ) ) - t*(2.*x[1]+x[2]*(1.+t)+x[3]) ;
@@ -199,6 +196,7 @@ float derivative(int pos, int density, float microstep,float messiness )
     if ( rate>0. ) return .5/rate;
     else return 1.;
 }
+#endif
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec2 screen = fragCoord.xy/iResolution.xy;
@@ -220,14 +218,19 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     float opacity = 2.;
     vec3 color = vec3(0.,.5,.6)*saturation;
     
-    // every time you draw a dot for a char, work out derivative at that point to fill in gaps with density of dots according to derivative
-    float cstep=.05;
-    //cstep=derivative(textPos, density, 0.,messiness);
-    //if(cstep<.05) cstep=.05;
     float spot=0.;
     float p = float(textPos+ iFrame-iFrame%297)+.5;
     vec4 x = chars[2*textPos]+rnd(p) * messiness;
     vec4 y = chars[2*textPos+1]+rnd1(p) * messiness; 
+    // character drawn exactly the same as the getPos() function
+#ifdef OTHER_PEN
+    // every time you draw a dot for a char, work out derivative at that point to fill in gaps with density of dots according to derivative
+    float cstep=.5;
+    cstep=derivative((float(iFrame%idensity))/density,x,y);
+    if(cstep<.05) cstep=.05;
+#else
+    float cstep=.05;
+#endif
 
     vec2 v = vec2(float(hPos/2),2.)/fN  *iResolution.xy;
     // draw dot and fill in dots at density matching derivative
