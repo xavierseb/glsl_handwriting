@@ -167,9 +167,9 @@
 // note: combining mismatched letters can make other interesting shapes.
 const float numLines=3.; // 3 lines below
  vec4 chars[] = vec4[int(fN)*4*int(numLines) +4] ( 
-    D E A R SP  T R A C E Y SP E M I N SP
-    I SP H A V E SP A SP Q U E S T I O N 
-    H A V E SP A SP N I C E SP D A Y LOVE SP
+    D E A R SP  T R A C E Y LOVE SP L O O K
+    A T SP M Y SP H A N D W R I T I N G 
+    H O P E SP Y O U SP L I K E SP I T SP
     END 
 );
 
