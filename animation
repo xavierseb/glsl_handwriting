@@ -200,40 +200,48 @@ float derivative(float t, vec4 x, vec4 y )
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec2 disp = fragCoord.xy/iResolution.xy;
-    vec2 ddisp = iResolution.xy/iResolution.x;
-    // density of dots drawn 1 - 60 this is related to fps, when adjusting this, adjust opacity too!! 
-    // expect higher fps monitors to need density set higher to slow down drawing animation pace, not tested on high fps monitor yet!
+    vec2 ddisp = vec2(1.,iResolution.y/iResolution.x);
+    
+    //---------parameters to tinker with------------------
+    // density of dots drawn 1 - 60 this is related to fps, 
+    // when adjusting this, adjust opacity too!
+    // higher fps monitors to need density set higher to slow 
+    // down drawing animation pace, not tested on high fps monitor
     float density = 12.;
-    int idensity = int(density);
     float messiness = .79; // 0.0 - 2.0
-
-    // jump from char to char (after drawing all the points of char, jump to next char)
-    int hPos = (iFrame%(int(fN)*2*idensity))/idensity;
-    // 
-    int textPos = (iFrame%(int(fN*numLines)*2*idensity))/idensity;    //vec2 xy = getPos(textPos)*iResolution.xy+ vec2(iResolution.x*float(textPos)/N_float, iResolution.y*2./N_float);
-
     // color = 0 to 1. for each r,g,b  opacity is ranged 0. to 1.
     float thickness = .12;
     float saturation=.425;
     // adjust opacity and density together to find sweet spot
     float opacity = 2.;
-    vec3 color = vec3(0.,.5,.6)*saturation;
+    vec3 color = vec3(0.,.5,.6);
+    // vertical page feed
+    float page_feed = 4.;    
+    // vec4 fadeout=vec4(0.998,.995,.985,1.);
+    //----------------------------------------------------
+
+    color *= saturation;
+    int fn = int(fN);
+    int idensity = int(density);
+    // jump from char to char (after drawing all the points of char, jump to next char)
+    int hPos = (iFrame%(fn*2*idensity))/idensity;
+    int textPos = (iFrame%(fn*numLines*2*idensity))/idensity;    
     
     float spot=0.;
     float p = float(textPos+ iFrame-iFrame%297)+.5;
     vec4 x = chars[2*textPos]+rnd(p) * messiness;
     vec4 y = chars[2*textPos+1]+rnd1(p) * messiness; 
     // character drawn exactly the same as the getPos() function
+
+    vec2 v = vec2(float(hPos/2),2.);
+    float bpos = float(iFrame%idensity)/density;
 #ifdef OTHER_PEN
     // every time you draw a dot for a char, work out derivative at that point to fill in gaps with density of dots according to derivative
-    float cstep=derivative((float(iFrame%idensity))/density,x,y);
+    float cstep=derivative(bpos,x,y);
     if(cstep<.05) cstep=.05;
 #else
     float cstep=.05;
 #endif
-
-    vec2 v = vec2(float(hPos/2),2.);
-    float bpos = float(iFrame%idensity)/density;
     // draw dot and fill in dots at density matching derivative
     for (float mstep=0.; mstep<1./density; mstep+=cstep/density) {  
         // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn, staggered with factor iFrame%297
@@ -244,12 +252,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec4 blob = spot*vec4(1.-color,1)*opacity;
          
     // vertical page feed
-    float page_feed = 4.;
+    if(iFrame%(fn*2*idensity)==0) disp.y -= (page_feed/fN);
     
-    if(iFrame%(int(fN)*2*idensity)==0) disp.y -= (page_feed/fN);
+    if(iFrame%(fn*2*idensity*numLines)==0) fragColor=vec4(0.,0.,0.,1.);
     
-    if(iFrame%(int(fN)*2*idensity*int(numLines))==0) fragColor=vec4(0.,0.,0.,1.);
-    
-    else fragColor = blob + texture(iChannel0,disp);// * vec3(0.998,.995,.985); // blob+buffer
+    else fragColor = blob + texture(iChannel0,disp) /* *fadeout*/; // blob+buffer
 }
-
