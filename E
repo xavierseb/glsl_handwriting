@@ -8,7 +8,7 @@
 
 // Elizabeth R I
 #define E01_x vec4(-5.8,-6.3,-6.6,-7.05)
-#define E02_x vec4(-8.2,-7.78,-6.24,-4.8)
+#define E02_x vec4(-10.3,-10.2,-6.24,-4.8)
 #define E03_x vec4(-6.36,-5.95,-5.8,-5.67)
 #define E04_x vec4(-5.47,-5.63,-5.67,-5.8)
 #define E05_x vec4(-13.9,-13.05,-7.8,-3.52)
@@ -226,8 +226,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     
     float spot=0.;
     float p = float(textPos)+.5;
-    vec4 x = chars[2*textPos]*.7+rnd(p) * messiness;
-    vec4 y = chars[2*textPos+1]*.7/ddisp.y+rnd1(p) * messiness; 
+    vec4 x = chars[2*textPos]*.7;//+rnd(p) * messiness;
+    vec4 y = chars[2*textPos+1]*.7/ddisp.y;//+rnd1(p) * messiness; 
     // character drawn exactly the same as the getPos() function
 
     vec2 v = iResolution.xy/50.*vec2(1.1,1.8);///ddisp/ddisp;//vec2(float(hPos/2),2.);
