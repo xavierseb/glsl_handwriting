@@ -46,6 +46,17 @@
 #define E37_x vec4(5.1,5.36,5.6,5.85)
 #define E38_x vec4(9.26,7.03,6.54,6.)
 #define E39_x vec4(6.3,7.8,8.12,7.7)
+
+/*
+#define E40_x vec4(7.7,7.6,4.4,10.55)
+#define E41_x vec4(10.35,23.2,13.15,12.1)
+#define E42_x vec4(12.1,11.73,7.9,12.54)
+#define E43_x vec4(12.54,15.9,12.25,13.)
+#define E44_x vec4(13.,13.8,15.9,12.4)
+#define E45_x vec4(12.4,8.2,12.6,11.5)
+#define E46_x vec4(11.5,8.9,5.97,8.65)
+*/
+
 #define E40_x vec4(7.7,7.6,4.4,10.55)
 #define E41_x vec4(10.43,10.4,9.9,9.94)
 #define E42_x vec4(9.3,9.86,10.43,10.75)
@@ -95,6 +106,17 @@
 #define E37_y vec4(-1.43,-1.4,-1.43,-1.3)
 #define E38_y vec4(2.1,2.14,-1.22,-2.97)
 #define E39_y vec4(-1.8,-.7,-1.67,-2.6)
+
+/*
+#define E40_y vec4(-2.6,-3.9,-1.67,-2.03)
+#define E41_y vec4(-2.03,-3.13,5.6,-2.16)
+#define E42_y vec4(-2.16,-6.65,-2.52,-2.72)
+#define E43_y vec4(-2.72,-2.56,-6.57,-2.3)
+#define E44_y vec4(-2.3,1.9,-1.5,-1.63)
+#define E45_y vec4(-1.63,-1.7,.92,-2.8)
+#define E46_y vec4(-2.8,-9.25,-3.53,-5.07)
+*/
+
 #define E40_y vec4(-2.6,-3.9,-1.67,-1.75)
 #define E41_y vec4(-.25,-1.4,-2.44,-3.)
 #define E42_y vec4(-3.13,-3.05,-3.13,-3.4)
@@ -111,15 +133,15 @@
 #define rnd1(p) vec4(.2*fract(sin(p/1.5)*100000.0),.5842*fract(sin(p/1.6)*100000.0),.5842*fract(sin(p/1.7)*100000.0),.2*fract(sin(p/1.8)*100000.0))
 
 // how many chars fit across screen, change this and then adjust chars[] to corresponding size = fN*4*numLines+4
-#define fW 24.
-#define iW 24
+#define fW 48.
+#define iW 48
 
 // 2 bezier curves for each character, 
 // e.g. for the letter a, 
 // x coords of control points are vec4(.75,-1.32,-1.44,.75) = x-coords of curve first part of 'a', vec4(.77,1.95,-2.28,-.59) = x-coords of second curve to draw 'a'
 // y coords are vec4(.75,1.05,.32,1.), vec4(-.59,1.82,.78,-1.), ditto
 // note: combining mismatched letters can make other interesting shapes.
-vec4 chars[] = vec4[int(fW)*4 ] ( 
+vec4 chars[] = vec4[iW*2] ( 
      E01_x, E01_y,     E02_x, E02_y,     E03_x, E03_y,     E04_x, E04_y,
      E05_x, E05_y,     E06_x, E06_y,     E07_x, E07_y,     E08_x, E08_y,
      E09_x, E09_y,     E10_x, E10_y,     E11_x, E11_y,     E12_x, E12_y,
@@ -133,7 +155,7 @@ vec4 chars[] = vec4[int(fW)*4 ] (
      E41_x, E41_y,     E42_x, E42_y,     E43_x, E43_y,     E44_x, E44_y,
      E45_x, E45_y,     E46_x, E46_y,     E47_x, E47_y,     E48_x, E48_y
  );
- 
+
 vec2 getPos(float t, vec4 x, vec4 y)
 {
     float t1 = 1.-t; 
@@ -165,7 +187,7 @@ vec2 getPos(float t, vec4 x, vec4 y)
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec2 disp = fragCoord.xy/iResolution.xy;
     
-    int textPos = ((iFrame%(iW*2*idensity))/idensity) *2;    
+    int textPos = ((iFrame%(iW*idensity))/idensity) *2;    
     
     float spot=0.;
     vec4 x = chars[textPos]*.7;//+rnd(p) * messiness;
