@@ -1,0 +1,258 @@
+// handwriting , Xavierseb 2019
+
+// bezier control points coordinates (x0,x1,x2,x3) and (y0,y1,y2,y3)
+// font char is drawn by bezier spline with control points at (x0,y0),(x1,y1),(x2,y2),(x3,y3)
+// todo: add flip/rotate/mirror/skewitalic
+// vec4( start_point, control_point_1, control_point_2, end_point)
+
+
+// Elizabeth R I
+#define E01_x vec4(-5.8,-6.3,-6.6,-7.05)
+#define E02_x vec4(-8.2,-7.78,-6.24,-4.8)
+#define E03_x vec4(-6.36,-5.95,-5.8,-5.67)
+#define E04_x vec4(-5.47,-5.63,-5.67,-5.8)
+#define E05_x vec4(-13.9,-13.05,-7.8,-3.52)
+#define E06_x vec4(-3.76,-.85,-.77,-6.6)
+#define E07_x vec4(-6.6,-10.3,-11.83,-11.5)
+#define E08_x vec4(-11.5,-11.1,-9.97,-10.9)
+#define E09_x vec4(-10.85,-14.8,-13.2,-13.24)
+#define E10_x vec4(-13.24,-14.33,-16.7,-12.88)
+#define E11_x vec4(-3.24,-3.9,-5.02,-5.7)
+#define E12_x vec4(-6.2,-5.95,-5.63,-5.26)
+#define E13_x vec4(-4.94,-4.53,-4.45,-4.66)
+#define E14_x vec4(-5.02,-4.78,-4.5,-4.33)
+#define E15_x vec4(-3.67,-3.7,-3.6,-3.35)
+#define E16_x vec4(-2.22,-3.7,-5.1,-1.1)
+#define E17_x vec4(-1.1,-2.1,-3.44,-4.13)
+#define E18_x vec4(-4.13,-.8,3.9,3.2)
+#define E19_x vec4(3.2,3.17,-6.08,-6.1)
+#define E20_x vec4(-6.1,-5.06,3.7,3.77)
+#define E21_x vec4(3.77,4.,-4.3,-4.5)
+#define E22_x vec4(-.04,-.85,-.9,-1.05)
+#define E23_x vec4(-1.05,-.8,-.4,-.04)
+#define E24_x vec4(.4,.05,-.4,.45)
+#define E25_x vec4(-2.1,-4.17,-1.5,1.42) 
+#define E26_x vec4(1.42,6.33,5.9,2.15)
+#define E27_x vec4(2.15,-5.14,-.2,2.)
+#define E28_x vec4(2.,3.77,7.,2.4)
+#define E29_x vec4(2.4,-2.5,-3.76,1.46)
+#define E30_x vec4(1.46,3.6,3.7,2.7)
+#define E31_x vec4(2.7,2.07,1.26,1.2)
+#define E32_x vec4(.73,1.54,2.44,2.4)
+#define E33_x vec4(2.4,2.96,1.75,1.4)
+#define E34_x vec4(4.1,4.5,4.26,4.1)
+#define E35_x vec4(4.1,3.54,2.3,4.03)
+#define E36_x vec4(5.4,4.23,4.96,5.4)
+#define E37_x vec4(5.1,5.36,5.6,5.85)
+#define E38_x vec4(9.26,7.03,6.54,6.)
+#define E39_x vec4(6.3,7.8,8.12,7.7)
+#define E40_x vec4(7.7,7.6,4.4,10.55)
+#define E41_x vec4(10.43,10.4,9.9,9.94)
+#define E42_x vec4(9.3,9.86,10.43,10.75)
+#define E43_x vec4(8.85,10.55,12.13,10.9)
+#define E44_x vec4(10.9,10.15,8.44,12.8)
+#define E45_x vec4(12.8,17.08,16.3,12.4)
+#define E46_x vec4(12.4,8.04,8.32,12.8)
+#define E47_x vec4(12.8,18.05,17.08,13.55)
+#define E48_x vec4(13.55,12.94,9.9,11.32)
+
+#define E01_y vec4(6.3,4.25,1.2,-4.34)
+#define E02_y vec4(4.9,6.6,6.24,6.36)
+#define E03_y vec4(1.9,2.15,2.2,2.1)
+#define E04_y vec4(2.6,2.23,2.,1.46)
+#define E05_y vec4(-4.14,-2.9,-3.9,-5.64)
+#define E06_y vec4(-5.55,-6.7,-2.9,-5.35)
+#define E07_y vec4(-5.35,-6.5,-5.96,-4.74)
+#define E08_y vec4(-4.74,-3.5,-5.2,-4.7)
+#define E09_y vec4(-5.84,-5.1,-7.55,-6.33)
+#define E10_y vec4(-6.33,-4.9,-8.84,-7.26)
+#define E11_y vec4(7.,7.54,2.67,-2.23)
+#define E12_y vec4(-2.1,-2.1,-2.07,-2.2)
+#define E13_y vec4(-1.1,-.53,-1.4,-2.03)
+#define E14_y vec4(-2.,-2.07,-2.07,-2.03)
+#define E15_y vec4(1.53,1.33,1.17,1.3)
+#define E16_y vec4(.08,.7,-2.07,-1.1)
+#define E17_y vec4(-1.1,-1.38,-2.55,-2.1)
+#define E18_y vec4(-2.1,-2.88,-6.04,-3.77)
+#define E19_y vec4(-3.77,-2.15,-5.84,-3.85)
+#define E20_y vec4(-3.85,-1.46,-7.9,-5.9)
+#define E21_y vec4(-5.9,-3.37,-8.27,-5.55)
+#define E22_y vec4(-1.06,-.77,-1.74,-2.84)
+#define E23_y vec4(-2.84,-2.47,-1.95,-1.8)
+#define E24_y vec4(-1.,-1.7,-3.97,-1.83)
+#define E25_y vec4(5.67,2.9,2.96,5.5)
+#define E26_y vec4(5.5,8.47,5.8,5.2)
+#define E27_y vec4(5.2,4.58,-.4,4.46)
+#define E28_y vec4(4.46,7.9,5.07,4.25)
+#define E29_y vec4(4.25,3.32,-.12,1.3)
+#define E30_y vec4(1.3,1.86,3.6,2.55)
+#define E31_y vec4(2.55,2.,-1.34,-3.)
+#define E32_y vec4(-3.04,-2.88,-3.65,-2.03)
+#define E33_y vec4(-2.03,-1.18,-.65,-1.62)
+#define E34_y vec4(-.78,-1.02,-1.26,-1.46)
+#define E35_y vec4(-1.46,-1.02,-4.02,-2.56)
+#define E36_y vec4(-.37,-2.84,-3.7,-2.6)
+#define E37_y vec4(-1.43,-1.4,-1.43,-1.3)
+#define E38_y vec4(2.1,2.14,-1.22,-2.97)
+#define E39_y vec4(-1.8,-.7,-1.67,-2.6)
+#define E40_y vec4(-2.6,-3.9,-1.67,-1.75)
+#define E41_y vec4(-.25,-1.4,-2.44,-3.)
+#define E42_y vec4(-3.13,-3.05,-3.13,-3.4)
+#define E43_y vec4(-.9,.6,-.7,-1.6)
+#define E44_y vec4(-1.6,-2.76,.48,-3.25)
+#define E45_y vec4(-3.25,-6.2,-1.22,-4.1)
+#define E46_y vec4(-4.1,-7.67,-2.24,-5.07)
+#define E47_y vec4(-5.07,-7.4,-3.13,-5.93)
+#define E48_y vec4(-5.93,-6.78,-6.3,-5.24)
+
+
+// randomizing to emulate messy handwriting
+#define rnd(p) vec4(.22*fract(sin(p/1.1)*100000.0),.582*fract(sin(p/1.2)*100000.0),.582*fract(sin(p/1.3)*100000.0),.2*fract(sin(p/1.4)*100000.0))
+#define rnd1(p) vec4(.2*fract(sin(p/1.5)*100000.0),.5842*fract(sin(p/1.6)*100000.0),.5842*fract(sin(p/1.7)*100000.0),.2*fract(sin(p/1.8)*100000.0))
+
+// how many chars fit across screen, change this and then adjust chars[] to corresponding size = fN*4*numLines+4
+#define fN 24.
+
+// 2 bezier curves for each character, 
+// e.g. for the letter a, 
+// x coords of control points are vec4(.75,-1.32,-1.44,.75) = x-coords of curve first part of 'a', vec4(.77,1.95,-2.28,-.59) = x-coords of second curve to draw 'a'
+// y coords are vec4(.75,1.05,.32,1.), vec4(-.59,1.82,.78,-1.), ditto
+// note: combining mismatched letters can make other interesting shapes.
+const int numLines=1; // 3 lines below
+ vec4 chars[] = vec4[int(fN)*4*numLines ] ( 
+     E01_x, E01_y,
+     E02_x, E02_y,
+     E03_x, E03_y,
+     E04_x, E04_y,
+     E05_x, E05_y,
+     E06_x, E06_y,
+     E07_x, E07_y,
+     E08_x, E08_y,
+     E09_x, E09_y,
+     E10_x, E10_y,     
+     E11_x, E11_y,
+     E12_x, E12_y,
+     E13_x, E13_y,
+     E14_x, E14_y,
+     E15_x, E15_y,
+     E16_x, E16_y,
+     E17_x, E17_y,
+     E18_x, E18_y,
+     E19_x, E19_y,
+     E20_x, E20_y,     
+     E21_x, E21_y,
+     E22_x, E22_y,
+     E23_x, E23_y,
+     E24_x, E24_y,
+     E25_x, E25_y,
+     E26_x, E26_y,
+     E27_x, E27_y,
+     E28_x, E28_y,
+     E29_x, E29_y,
+     E30_x, E30_y,     
+     E31_x, E31_y,
+     E32_x, E32_y,
+     E33_x, E33_y,
+     E34_x, E34_y,
+     E35_x, E35_y,
+     E36_x, E36_y,
+     E37_x, E37_y,
+     E38_x, E38_y,
+     E39_x, E39_y,
+     E40_x, E40_y,     
+     E41_x, E41_y,
+     E42_x, E42_y,
+     E43_x, E43_y,
+     E44_x, E44_y,
+     E45_x, E45_y,
+     E46_x, E46_y,
+     E47_x, E47_y,
+     E48_x, E48_y
+ );
+
+vec2 getPos(float t, vec4 x, vec4 y)
+{
+    float t1 = 1.-t; 
+    // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]    
+    vec4 n = vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);    
+    return vec2(dot(x,n), dot(y,n));
+}
+
+//#define OTHER_PEN
+#ifdef OTHER_PEN
+// calculate rate of change of length so as to plot more densely when rate of change is higher 
+// note, since the derivative is at a specific point, the density of dots drawn is only accurate close to the point where the derivative is calculated 
+// so you have to hand tune the variables accordingly.
+// actually, maybe this part was a bad idea
+float derivative(float t, vec4 x, vec4 y )
+{
+    float t1 = 1.-t;
+    // derivative of x(t) and y(t) with respect to t
+    vec4 ddt = vec4(-t1*t1, t1*t1-2.*t*t1, 2.*t*t1-t*t, t*t)/* *3.*/; *3 is ignorable
+    float rate = length(ddt);
+    if ( rate==0. ) return 1.;
+    return .08/rate;
+}
+#endif
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+    vec2 disp = fragCoord.xy/iResolution.xy;
+    vec2 ddisp = vec2(1.,iResolution.y/iResolution.x);
+    
+    //---------parameters to tinker with------------------
+    // density of dots drawn 1 - 60 this is related to fps, 
+    // when adjusting this, adjust opacity too!
+    // higher fps monitors to need density set higher to slow 
+    // down drawing animation pace, not tested on high fps monitor
+    float density = 12.;
+    float messiness = .79; // 0.0 - 2.0
+    // color = 0 to 1. for each r,g,b  opacity is ranged 0. to 1.
+    float thickness = .12;
+    float saturation=.425;
+    // adjust opacity and density together to find sweet spot
+    float opacity = 2.;
+    vec3 color = vec3(0.,.5,.6);
+    // vertical page feed
+    float page_feed = 18.;    
+    // vec4 fadeout=vec4(0.998,.995,.985,1.);
+    //----------------------------------------------------
+
+    color *= saturation;
+    int fn = int(fN);
+    int idensity = int(density);
+    // jump from char to char (after drawing all the points of char, jump to next char)
+    int hPos = (iFrame%(fn*2*idensity))/idensity;
+    int textPos = (iFrame%(fn*numLines*2*idensity))/idensity;    
+    
+    float spot=0.;
+    float p = float(textPos)+.5;
+    vec4 x = chars[2*textPos]*.7+rnd(p) * messiness;
+    vec4 y = chars[2*textPos+1]*.7/ddisp.y+rnd1(p) * messiness; 
+    // character drawn exactly the same as the getPos() function
+
+    vec2 v = iResolution.xy/50.*vec2(1.1,1.8);///ddisp/ddisp;//vec2(float(hPos/2),2.);
+    float bpos = float(iFrame%idensity)/density;
+#ifdef OTHER_PEN
+    // every time you draw a dot for a char, work out derivative at that point to fill in gaps with density of dots according to derivative
+    float cstep=derivative(bpos,x,y);
+    if(cstep<.05) cstep=.05;
+#else
+    float cstep=.05;
+#endif
+    // draw dot and fill in dots at density matching derivative
+    for (float mstep=0.; mstep<1./density; mstep+=cstep/density) {  
+        // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn, staggered with factor iFrame%297
+        vec2 xy = getPos(bpos+mstep,x,y) +v;
+        
+    	spot += (thickness - clamp(length(ddisp*(disp*fN -xy)),0.,thickness));
+    }
+    vec4 blob = spot*vec4(1.-color,1)*opacity;
+         
+    // vertical page feed
+    //if(iFrame%(fn*2*idensity)==0) disp.y -= (page_feed/fN);
+    
+    if(iFrame%(fn*2*idensity*numLines*2)==0) fragColor=vec4(0.,0.,0.,1.);
+    
+    else 
+        fragColor = blob + texture(iChannel0,disp) /* *fadeout*/; // blob+buffer
+}
