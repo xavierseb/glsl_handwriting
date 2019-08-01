@@ -8,7 +8,7 @@
 
 // Elizabeth R I
 #define E01_x vec4(-5.8,-6.3,-6.6,-7.05)
-#define E02_x vec4(-10.3,-10.2,-6.24,-4.8)
+#define E02_x vec4(-8.2,-7.78,-6.24,-4.8)
 #define E03_x vec4(-6.36,-5.95,-5.8,-5.67)
 #define E04_x vec4(-5.47,-5.63,-5.67,-5.8)
 #define E05_x vec4(-13.9,-13.05,-7.8,-3.52)
@@ -111,15 +111,15 @@
 #define rnd1(p) vec4(.2*fract(sin(p/1.5)*100000.0),.5842*fract(sin(p/1.6)*100000.0),.5842*fract(sin(p/1.7)*100000.0),.2*fract(sin(p/1.8)*100000.0))
 
 // how many chars fit across screen, change this and then adjust chars[] to corresponding size = fN*4*numLines+4
-#define fN 24.
+#define fW 24.
+#define iW 24
 
 // 2 bezier curves for each character, 
 // e.g. for the letter a, 
 // x coords of control points are vec4(.75,-1.32,-1.44,.75) = x-coords of curve first part of 'a', vec4(.77,1.95,-2.28,-.59) = x-coords of second curve to draw 'a'
 // y coords are vec4(.75,1.05,.32,1.), vec4(-.59,1.82,.78,-1.), ditto
 // note: combining mismatched letters can make other interesting shapes.
-const int numLines=1; // 3 lines below
- vec4 chars[] = vec4[int(fN)*4*numLines ] ( 
+vec4 chars[] = vec4[int(fW)*4 ] ( 
      E01_x, E01_y,
      E02_x, E02_y,
      E03_x, E03_y,
@@ -178,81 +178,45 @@ vec2 getPos(float t, vec4 x, vec4 y)
     return vec2(dot(x,n), dot(y,n));
 }
 
-//#define OTHER_PEN
-#ifdef OTHER_PEN
-// calculate rate of change of length so as to plot more densely when rate of change is higher 
-// note, since the derivative is at a specific point, the density of dots drawn is only accurate close to the point where the derivative is calculated 
-// so you have to hand tune the variables accordingly.
-// actually, maybe this part was a bad idea
-float derivative(float t, vec4 x, vec4 y )
-{
-    float t1 = 1.-t;
-    // derivative of x(t) and y(t) with respect to t
-    vec4 ddt = vec4(-t1*t1, t1*t1-2.*t*t1, 2.*t*t1-t*t, t*t)/* *3.*/; *3 is ignorable
-    float rate = length(ddt);
-    if ( rate==0. ) return 1.;
-    return .08/rate;
-}
-#endif
-
-void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-    vec2 disp = fragCoord.xy/iResolution.xy;
-    vec2 ddisp = vec2(1.,iResolution.y/iResolution.x);
+#define COLOR(r,g,b) vec4 color=vec4(1.-r,1.-g,1.-b,1.);
     
     //---------parameters to tinker with------------------
     // density of dots drawn 1 - 60 this is related to fps, 
     // when adjusting this, adjust opacity too!
     // higher fps monitors to need density set higher to slow 
     // down drawing animation pace, not tested on high fps monitor
-    float density = 12.;
-    float messiness = .79; // 0.0 - 2.0
+	   #define density 12.
+	   #define idensity 12
+	   // messiness  0.0 - 2.0
+	   //#define messiness .79 
     // color = 0 to 1. for each r,g,b  opacity is ranged 0. to 1.
-    float thickness = .12;
-    float saturation=.425;
+	   #define thickness .12
     // adjust opacity and density together to find sweet spot
-    float opacity = 2.;
-    vec3 color = vec3(0.,.5,.6);
-    // vertical page feed
-    float page_feed = 18.;    
-    // vec4 fadeout=vec4(0.998,.995,.985,1.);
+	   #define opacity  2.
+	   //vec4 color =vec4(1.)-vec4( .3, .4,.5, 0.); 
+	   COLOR(.3,.4,.5)
+	   // #define fadeout vec4(0.998,.995,.985,1.)
     //----------------------------------------------------
-
-    color *= saturation;
-    int fn = int(fN);
-    int idensity = int(density);
-    // jump from char to char (after drawing all the points of char, jump to next char)
-    int hPos = (iFrame%(fn*2*idensity))/idensity;
-    int textPos = (iFrame%(fn*numLines*2*idensity))/idensity;    
+	
+void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+    vec2 disp = fragCoord.xy/iResolution.xy;
+    
+    int textPos = ((iFrame%(iW*2*idensity))/idensity) *2;    
     
     float spot=0.;
-    float p = float(textPos)+.5;
-    vec4 x = chars[2*textPos]*.7;//+rnd(p) * messiness;
-    vec4 y = chars[2*textPos+1]*.7/ddisp.y;//+rnd1(p) * messiness; 
-    // character drawn exactly the same as the getPos() function
+    vec4 x = chars[textPos]*.7;//+rnd(p) * messiness;
+    vec4 y = chars[textPos+1]*.7*iResolution.x/iResolution.y;//+rnd1(p) * messiness; 
 
-    vec2 v = iResolution.xy/50.*vec2(1.1,1.8);///ddisp/ddisp;//vec2(float(hPos/2),2.);
+    vec2 v = (disp-.5)*fW;
+    
     float bpos = float(iFrame%idensity)/density;
-#ifdef OTHER_PEN
-    // every time you draw a dot for a char, work out derivative at that point to fill in gaps with density of dots according to derivative
-    float cstep=derivative(bpos,x,y);
-    if(cstep<.05) cstep=.05;
-#else
-    float cstep=.05;
-#endif
     // draw dot and fill in dots at density matching derivative
-    for (float mstep=0.; mstep<1./density; mstep+=cstep/density) {  
-        // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn, staggered with factor iFrame%297
-        vec2 xy = getPos(bpos+mstep,x,y) +v;
-        
-    	spot += (thickness - clamp(length(ddisp*(disp*fN -xy)),0.,thickness));
+    for (float mstep=0.; mstep<1./density; mstep+=.05/density) {  
+        vec2 xy = getPos(bpos+mstep,x,y);       
+    	   spot += (thickness - clamp(length(xy-v),0.,thickness));
     }
-    vec4 blob = spot*vec4(1.-color,1)*opacity;
-         
-    // vertical page feed
-    //if(iFrame%(fn*2*idensity)==0) disp.y -= (page_feed/fN);
-    
-    if(iFrame%(fn*2*idensity*numLines*2)==0) fragColor=vec4(0.,0.,0.,1.);
-    
-    else 
-        fragColor = blob + texture(iChannel0,disp) /* *fadeout*/; // blob+buffer
+    vec4 blob = spot*color*opacity;
+             
+    if(iFrame%(iW*idensity*4)==0) fragColor=vec4(0.,0.,0.,1.);    
+    else fragColor = blob + texture(iChannel0,disp) /* *fadeout*/; // blob+buffer
 }
