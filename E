@@ -176,7 +176,7 @@ vec2 getPos(float t, vec4 x, vec4 y)
 	// messiness  0.0 - 2.0
 	//#define messiness .79 
     // color = 0 to 1. for each r,g,b  opacity is ranged 0. to 1.
-	#define thickness .12
+	#define thickness .2
     // adjust opacity and density together to find sweet spot
 	#define opacity  2.
 	//vec4 color =vec4(1.)-vec4( .3, .4,.5, 0.); 
@@ -190,8 +190,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     int textPos = ((iFrame%(iW*idensity))/idensity) *2;    
     
     float spot=0.;
-    vec4 x = chars[textPos]*.7;//+rnd(p) * messiness;
-    vec4 y = chars[textPos+1]*.7*iResolution.x/iResolution.y;//+rnd1(p) * messiness; 
+    vec4 x = chars[textPos];//+rnd(p) * messiness;
+    vec4 y = chars[textPos+1]*iResolution.x/iResolution.y;//+rnd1(p) * messiness; 
 
     vec2 v = (disp-.5)*fW;
     
@@ -203,6 +203,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     }
     vec4 blob = spot*color*opacity;
              
-    if(iFrame%(iW*idensity*4)==0) fragColor=vec4(0.,0.,0.,1.);    
+    if(iFrame%(iW*idensity*2)==0) fragColor=vec4(0.,0.,0.,1.);    
     else fragColor = blob + texture(iChannel0,disp) /* *fadeout*/; // blob+buffer
 }
