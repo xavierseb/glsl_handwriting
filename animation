@@ -154,8 +154,8 @@
 #define END draw(vec4(1000.),vec4(1000.),vec4(1000.),vec4(1000.))
 
 // randomizing to emulate messy handwriting
-#define rnd(p) vec4(.22*fract(sin(p/1.1)*100000.0),.582*fract(sin(p/1.2)*100000.0),.582*fract(sin(p/1.3)*100000.0),.2*fract(sin(p/1.4)*100000.0))
-#define rnd1(p) vec4(.2*fract(sin(p/1.5)*100000.0),.5842*fract(sin(p/1.6)*100000.0),.5842*fract(sin(p/1.7)*100000.0),.2*fract(sin(p/1.8)*100000.0))
+#define rnd(p) vec4(.22*fract(sin(p/1.1)*122345.0),.58*fract(sin(p/1.2)*234567.0),.58*fract(sin(p/1.3)*333333.),.2*fract(sin(p/1.4)*222222.))
+#define rnd1(p) vec4(.2*fract(sin(p/1.5)*176543.0),.58*fract(sin(p/1.6)*456789.0),.58*fract(sin(p/1.7)*111111.),.2*fract(sin(p/1.8)*668766.))
 
 // how many chars fit across screen, change this and then adjust chars[] 
 // to corresponding size = fN*4*numLines+4
@@ -236,11 +236,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     // jump from char to char (after drawing all the points of char, jump to next char)
     int textPos = (iFrame%(i2W*idensity *inumLines))/idensity;    
     float hPos = float( (textPos%i2W)/2 );//float(((iFrame%(iW*2*idensity))/idensity)/2);
-    float ti=int(iTime);
     
     float spot=0.;
-    vec4 x = chars[2*textPos]  +rnd(ti) * messiness;
-    vec4 y = chars[2*textPos+1]*iResolution.x/iResolution.y  +rnd1(ti) * messiness; 
+    float mess=round(iTime/(hPos+1.));
+    vec4 x = chars[2*textPos]  +rnd(mess) * messiness;
+    vec4 y = chars[2*textPos+1]*iResolution.x/iResolution.y  +rnd1(mess) * messiness; 
     // character drawn exactly the same as the getPos() function
 
     vec2 v = disp*fW - vec2(hPos,yPos);
