@@ -191,6 +191,24 @@ vec2 getPos(float t, vec4 x, vec4 y)
 	COLOR(.3,.4,.5)
 	// #define fadeout vec4(0.998,.995,.985,1.)
     //----------------------------------------------------
+    
+    /*
+    #define c(u,v) chars[u]=v;
+
+     vec4 chars[96];
+     c( 0,E01_x) c( 1,E01_y)     c( 2,E02_x) c( 3,E02_y)     c( 4,E03_x) c( 5,E03_y)     c( 6,E04_x) c( 7,E04_y)
+     c( 8,E05_x) c( 9,E05_y)     c(10,E06_x) c(11,E06_y)     c(12,E07_x) c(13,E07_y)     c(14,E08_x) c(15,E08_y)
+     c(16,E09_x) c(17,E09_y)     c(18,E10_x) c(19,E10_y)     c(20,E11_x) c(21,E11_y)     c(22,E12_x) c(23,E12_y)
+     c(24,E13_x) c(25,E13_y)     c(26,E14_x) c(27,E14_y)     c(28,E15_x) c(29,E15_y)     c(30,E16_x) c(31,E16_y)
+     c(32,E17_x) c(33,E17_y)     c(34,E18_x) c(35,E18_y)     c(36,E19_x) c(37,E19_y)     c(38,E20_x) c(39,E20_y)    
+     c(40,E21_x) c(41,E21_y)     c(42,E22_x) c(43,E22_y)     c(44,E23_x) c(45,E23_y)     c(46,E24_x) c(47,E24_y)
+     c(48,E25_x) c(49,E25_y)     c(50,E26_x) c(51,E26_y)     c(52,E27_x) c(53,E27_y)     c(54,E28_x) c(55,E28_y)
+     c(56,E29_x) c(57,E29_y)     c(58,E30_x) c(59,E30_y)     c(59,E31_x) c(60,E31_y)     c(61,E32_x) c(62,E32_y)
+     c(64,E33_x) c(65,E33_y)     c(66,E34_x) c(67,E34_y)     c(68,E35_x) c(69,E35_y)     c(70,E36_x) c(71,E36_y)
+     c(72,E37_x) c(73,E37_y)     c(74,E38_x) c(75,E38_y)     c(75,E39_x) c(76,E39_y)     c(77,E40_x) c(78,E40_y)    
+     c(80,E41_x) c(81,E41_y)     c(82,E42_x) c(83,E42_y)     c(84,E43_x) c(85,E43_y)     c(86,E44_x) c(87,E44_y)
+     c(88,E45_x) c(89,E45_y)     c(90,E46_x) c(91,E46_y)     c(92,E47_x) c(93,E47_y)     c(94,E48_x) c(95,E48_y)
+     */
 	
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec2 disp = fragCoord.xy/iResolution.xy;
