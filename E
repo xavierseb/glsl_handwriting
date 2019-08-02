@@ -213,7 +213,7 @@ vec2 getPos(float t, vec4 x, vec4 y)
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec2 disp = fragCoord.xy/iResolution.xy;
     
-    int textPos = ((iFrame%(iW*idensity))/idensity) *2;    
+    int textPos = ((iFrame%(iW*idensity))/idensity) *2;   // int( mod(float(iFrame), fW*density)/ density) *2;
     
     float spot=0.;
     vec4 x = chars[textPos];//+rnd(p) * messiness;
@@ -221,7 +221,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
     vec2 v = (disp-.5)*fW;
     
-    float bpos = float(iFrame%idensity)/density;
+    float bpos = float(iFrame%idensity)/density;    //mod( float(iFrame), density)/density;
     // draw dot and fill in dots at density matching derivative
     for (float mstep=0.; mstep<1./density; mstep+=.05/density) {  
         vec2 xy = getPos(bpos+mstep,x,y);       
@@ -229,6 +229,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     }
     vec4 blob = spot*color*opacity;
              
-    if(iFrame%(iW*idensity*2)==0) fragColor=vec4(0.,0.,0.,1.);    
+    if(iFrame%(iW*idensity*2)==0) fragColor=vec4(0.,0.,0.,1.);   // if( mod(float(iFrame), fW*density*2.)<.01 )
     else fragColor = blob + texture(iChannel0,disp) /* *fadeout*/; // blob+buffer
 }
