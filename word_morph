@@ -281,6 +281,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
    	}
     }
     
-	vec3 col = vec3(1.-step(d,.09));
+	vec3 col = vec3(1.-smoothstep(d,.19,.3));
+	//vec3 col = vec3(1.-step(d,.09));
 	fragColor = vec4(col,1.0);
 }
