@@ -242,28 +242,28 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     int frame = (fr/100) %(fN-1);
    
     int charsAcross = (fN-1)/numLines ;
-    int curLine = (frame)%(numLines);
+    int curLine = frame%numLines;
     vec2 p = (2.*fragCoord.xy-iResolution.xy)/iResolution.x *float(charsAcross)
         			+ vec2(float(charsAcross),0.);
-    float xsav = p.x;
+    int xsav = int(p.x/2.);
     p.x = mod(p.x,2.);
     
  	float d = 10.;  
     float m = fract(float(fr)/100.);
 
-    int icharPos = int(xsav/2.) + (curLine)*(charsAcross);
-    int nextLine = icharPos*4;//
-    if(nextLine+charsAcross*4>(fN-1)*4) {
+    int icharPos = ( xsav + curLine*charsAcross )*4;
+    int nextLine = icharPos+charsAcross*4;
+    if(nextLine>(fN-1)*4) {
         nextLine=0;
-        charsAcross=0;//(icharPos*4)%(fN-1);
+        charsAcross=0;
     }
     
     // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn
     //vec4 ca = mix(chars[frame*4],chars[frame*4+4],m);
-    vec4 ca = mix(chars[icharPos*4],chars[nextLine+charsAcross*4],m);
-    vec4 cb = mix(chars[icharPos*4+1],chars[nextLine+charsAcross*4+1],m);
-    vec4 cc = mix(chars[icharPos*4+2],chars[nextLine+charsAcross*4+2],m);
-    vec4 cd = mix(chars[icharPos*4+3],chars[nextLine+charsAcross*4+3],m);
+    vec4 ca = mix(chars[icharPos  ],chars[nextLine  ],m);
+    vec4 cb = mix(chars[icharPos+1],chars[nextLine+1],m);
+    vec4 cc = mix(chars[icharPos+2],chars[nextLine+2],m);
+    vec4 cd = mix(chars[icharPos+3],chars[nextLine+3],m);
 
     for(float i1=0.0; i1<1.0; i1+=0.1) {
         vec2 h=getPos(i1,ca,cb);
