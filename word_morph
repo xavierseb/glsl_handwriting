@@ -240,35 +240,31 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     int fr = iFrame * speed/10;
     int frame = (fr/100) %(fN-2);
    
-    int charsAcross = (fN-1)/numLines;
-    int curLine = (frame/charsAcross)%numLines;
+    int charsAcross = (fN-1)/numLines ;
+    int curLine = frame%charsAcross;
     vec2 p = float(charsAcross)*(2.*fragCoord.xy-iResolution.xy)/iResolution.x 
-        			//+ vec2(float(charsAcross),0.)
-       ;//- vec2( 2.,0.); 
+        			+ vec2(float(charsAcross),0.)
+      ;// - vec2( 1.,0.); 
     vec2 p2=p;
     p.x = mod(p.x,2.);
-    //int charIdx = int(p.x/2.);
-    //vec2 pChar = p-vec2(2.*float(charIdx));
     
  	float d = 10.;  
     float m = fract(float(fr)/100.);
 
-    int icharPos = //int(p2.x) //int(p.x/2.)
-        + (curLine)*(charsAcross);
+    int icharPos = int(p2.x/2.)+charsAcross + (curLine)*(charsAcross);
     
-    //int cn = 
     // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn
     //vec4 ca = mix(chars[frame*4],chars[frame*4+4],m);
-    vec4 ca = mix(chars[icharPos*4],chars[icharPos*4+charsAcross*4-4+4],m);
-    vec4 cb = mix(chars[icharPos*4+1],chars[icharPos*4+charsAcross*4-4+5],m);
-    vec4 cc = mix(chars[icharPos*4+2],chars[icharPos*4+charsAcross*4-4+6],m);
-    vec4 cd = mix(chars[icharPos*4+3],chars[icharPos*4+charsAcross*4-4+7],m);
+    vec4 ca = mix(chars[icharPos*4],chars[icharPos*4+charsAcross*4],m);
+    vec4 cb = mix(chars[icharPos*4+1],chars[icharPos*4+charsAcross*4+1],m);
+    vec4 cc = mix(chars[icharPos*4+2],chars[icharPos*4+charsAcross*4+2],m);
+    vec4 cd = mix(chars[icharPos*4+3],chars[icharPos*4+charsAcross*4+3],m);
 
-    for(float i1=0.0; i1<1.0; i1+=0.05) {
+    for(float i1=0.0; i1<1.0; i1+=0.1) {
         vec2 h=getPos(i1,ca,cb);
         d=min(d,distance(p, h ));   
         // try to spread out dots
-        vec2 yd=getPos(i1+.05,ca,cb) -h;
+        vec2 yd=getPos(i1+.1,ca,cb) -h;
         float y=length(yd)*11.;
         yd/=y;
        	for(float k=0.; k<y; k++) {
