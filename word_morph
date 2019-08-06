@@ -174,7 +174,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 // y coords are vec4(.75,1.05,.32,1.), vec4(-.59,1.82,.78,-1.), ditto
 // note: combining mismatched letters can make other interesting shapes.
 // number of chars
-#define fN 33  
+#define fN 29  
 #define numLines 4
 //#define fN   34
 //#define fN 10
@@ -187,10 +187,10 @@ vec4 chars[] = vec4[ fN *4 ] (
     //O F _
     //T E X T DOT SP SP		
     
-  A B C D E F _ H
-  K S O R A Y A _
-  G _ C A N _ _ _
-  J D A N C E _ _
+  SP SP SP SP SP SP SP 
+  SP M O R P H SP 
+  SP T H E S E SP
+  SP W O R D S SP
     
     END		// necessary
 );
@@ -238,27 +238,31 @@ vec2 getPos(float t, vec4 c1, vec4 c2)
 const int speed=25;
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     int fr = iFrame * speed/10;
-    int frame = (fr/100) %(fN-2);
+    int frame = (fr/100) %(fN-1);
    
     int charsAcross = (fN-1)/numLines ;
-    int curLine = frame%charsAcross;
-    vec2 p = float(charsAcross)*(2.*fragCoord.xy-iResolution.xy)/iResolution.x 
-        			+ vec2(float(charsAcross),0.)
-      ;// - vec2( 1.,0.); 
-    vec2 p2=p;
+    int curLine = (frame)%(numLines);
+    vec2 p = (2.*fragCoord.xy-iResolution.xy)/iResolution.x *float(charsAcross)
+        			+ vec2(float(charsAcross),0.);
+    float xsav = p.x;
     p.x = mod(p.x,2.);
     
  	float d = 10.;  
     float m = fract(float(fr)/100.);
 
-    int icharPos = int(p2.x/2.)+charsAcross + (curLine)*(charsAcross);
+    int icharPos = int(xsav/2.) + (curLine)*(charsAcross);
+    int nextLine = icharPos*4;//
+    if(nextLine+charsAcross*4>(fN-1)*4) {
+        nextLine=0;
+        charsAcross=0;//(icharPos*4)%(fN-1);
+    }
     
     // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn
     //vec4 ca = mix(chars[frame*4],chars[frame*4+4],m);
-    vec4 ca = mix(chars[icharPos*4],chars[icharPos*4+charsAcross*4],m);
-    vec4 cb = mix(chars[icharPos*4+1],chars[icharPos*4+charsAcross*4+1],m);
-    vec4 cc = mix(chars[icharPos*4+2],chars[icharPos*4+charsAcross*4+2],m);
-    vec4 cd = mix(chars[icharPos*4+3],chars[icharPos*4+charsAcross*4+3],m);
+    vec4 ca = mix(chars[icharPos*4],chars[nextLine+charsAcross*4],m);
+    vec4 cb = mix(chars[icharPos*4+1],chars[nextLine+charsAcross*4+1],m);
+    vec4 cc = mix(chars[icharPos*4+2],chars[nextLine+charsAcross*4+2],m);
+    vec4 cd = mix(chars[icharPos*4+3],chars[nextLine+charsAcross*4+3],m);
 
     for(float i1=0.0; i1<1.0; i1+=0.1) {
         vec2 h=getPos(i1,ca,cb);
