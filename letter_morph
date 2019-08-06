@@ -206,7 +206,7 @@ float derivative(float t, int pos, float point)//, int density, float microstep 
     else return .1;
 }
 
-vec2 getPos(float t, vec4 c1, vec4 c2, vec4 c3, vec4 c4)
+vec2 getPos(float t, vec4 c1, vec4 c2)
 {    
     float t1 = 1.-t; 
        
@@ -214,7 +214,7 @@ vec2 getPos(float t, vec4 c1, vec4 c2, vec4 c3, vec4 c4)
     vec4 n = vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
     
     //return vec2(x[0]+x[1]+x[2]+x[3],y[0]+y[1]+y[2]+y[3]);
-    return vec2(dot(x,n), dot(y,n));
+    return vec2(dot(c1,n), dot(c2,n));
     
     // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]
     // original 
