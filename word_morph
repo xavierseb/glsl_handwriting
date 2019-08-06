@@ -243,17 +243,18 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     int charsAcross = (fN-1)/numLines;
     int curLine = (frame/charsAcross)%numLines;
     vec2 p = float(charsAcross)*(2.*fragCoord.xy-iResolution.xy)/iResolution.x 
-        			- vec2(-float(charsAcross),0.)
+        			//+ vec2(float(charsAcross),0.)
        ;//- vec2( 2.,0.); 
     vec2 p2=p;
     p.x = mod(p.x,2.);
-    int charIdx = int(p.x/2.);
-    vec2 pChar = p-vec2(2.*float(charIdx));
+    //int charIdx = int(p.x/2.);
+    //vec2 pChar = p-vec2(2.*float(charIdx));
     
  	float d = 10.;  
     float m = fract(float(fr)/100.);
 
-    int icharPos = int(p2.x-1.) + (curLine-1)*(charsAcross);
+    int icharPos = //int(p2.x) //int(p.x/2.)
+        + (curLine)*(charsAcross);
     
     //int cn = 
     // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn
