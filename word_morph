@@ -320,6 +320,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
     }
     if (icharPos-4>=0) {// if (icharPos/4==15) {
+            if( icharPos/4>= fN-8) nextLine=4;
         p.x+=4.;
             // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn
     //vec4 ca = mix(chars[frame*4],chars[frame*4+4],m);
