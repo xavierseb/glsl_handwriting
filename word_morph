@@ -226,8 +226,41 @@ vec2 getPos(float t, vec4 c1, vec4 c2)
 
     // return  vec2(xt,yt);
 }
-    
-const int speed=25;
+
+float doSomething(int icharPos, int nextLine, vec2 p, float m) {
+    vec4 ca = mix(chars[icharPos  ],chars[nextLine  ],m);
+    vec4 cb = mix(chars[icharPos+1],chars[nextLine+1],m);
+    vec4 cc = mix(chars[icharPos+2],chars[nextLine+2],m);
+    vec4 cd = mix(chars[icharPos+3],chars[nextLine+3],m);
+    float d=10.;
+    for(float i1=0.0; i1<1.0; i1+=0.1) {
+        vec2 h=getPos(i1,ca,cb);
+        d=min(d,distance(p, h ));   
+        // try to spread out dots
+        vec2 yd=getPos(i1+.1,ca,cb) -h;
+        float y=length(yd)*11.;
+        yd/=y;
+       	for(float k=0.; k<y; k++) {
+            //if (d>.01) // uncomment when using thicker text
+                d=min(d,distance(p, h));
+            h += yd;
+   		}
+        
+        h=getPos(i1,cc,cd);
+        d=min(d,distance(p, h ));   
+        yd=getPos(i1+.1,cc,cd) -h;
+        y=length(yd)*11.;
+        yd/=y;
+       	for(float k=0.; k<y; k++) {
+    	    //if (d>.01) 
+                d=min(d,distance(p, h));
+            h += yd;
+   	}
+    }
+    return d;
+}  
+
+const int speed=16;
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     const int fN = chars.length()/4;
     const int numLines = fN/widthInChars;
@@ -246,120 +279,29 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
     int icharPos = ( xsav + curLine*charsAcross )*4;
     int nextLine = icharPos+charsAcross*4;
-    if(nextLine>(fN-1)*4) {
-        nextLine=0;
-        charsAcross=0;
-    }
+    if(nextLine>(fN-1)*4) nextLine=0;
     
-    // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn
-    //vec4 ca = mix(chars[frame*4],chars[frame*4+4],m);
-    vec4 ca = mix(chars[icharPos  ],chars[nextLine  ],m);
-    vec4 cb = mix(chars[icharPos+1],chars[nextLine+1],m);
-    vec4 cc = mix(chars[icharPos+2],chars[nextLine+2],m);
-    vec4 cd = mix(chars[icharPos+3],chars[nextLine+3],m);
-
-    for(float i1=0.0; i1<1.0; i1+=0.1) {
-        vec2 h=getPos(i1,ca,cb);
-        d=min(d,distance(p, h ));   
-        // try to spread out dots
-        vec2 yd=getPos(i1+.1,ca,cb) -h;
-        float y=length(yd)*11.;
-        yd/=y;
-       	for(float k=0.; k<y; k++) {
-            //if (d>.01) // uncomment when using thicker text
-                d=min(d,distance(p, h));
-            h += yd;
-   	}
-        
-        h=getPos(i1,cc,cd);
-        d=min(d,distance(p, h ));   
-        yd=getPos(i1+.1,cc,cd) -h;
-        y=length(yd)*11.;
-        yd/=y;
-       	for(float k=0.; k<y; k++) {
-    	    //if (d>.01) 
-                d=min(d,distance(p, h));
-            h += yd;
-   	}
-    }
- 
- 
- #define IMPROVED_DRAWING
+    d = min(d, doSomething(icharPos,nextLine, p, m));
+    
+     
+#define IMPROVED_DRAWING
 #ifdef IMPROVED_DRAWING
-    {// if (icharPos/4==15) {
-        p.x-=2.;
-            // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn
-    //vec4 ca = mix(chars[frame*4],chars[frame*4+4],m);
-    vec4 ca = mix(chars[icharPos+4],chars[nextLine+4],m);
-    vec4 cb = mix(chars[icharPos+5],chars[nextLine+5],m);
-    vec4 cc = mix(chars[icharPos+6],chars[nextLine+6],m);
-    vec4 cd = mix(chars[icharPos+7],chars[nextLine+7],m);
-
-    for(float i1=0.0; i1<1.0; i1+=0.1) {
-        vec2 h=getPos(i1,ca,cb);
-        d=min(d,distance(p, h ));   
-        // try to spread out dots
-        vec2 yd=getPos(i1+.1,ca,cb) -h;
-        float y=length(yd)*11.;
-        yd/=y;
-       	for(float k=0.; k<y; k++) {
-            //if (d>.01) // uncomment when using thicker text
-                d=min(d,distance(p, h));
-            h += yd;
-   		}
-        
-        h=getPos(i1,cc,cd);
-        d=min(d,distance(p, h ));   
-        yd=getPos(i1+.1,cc,cd) -h;
-        y=length(yd)*11.;
-        yd/=y;
-       	for(float k=0.; k<y; k++) {
-    	    //if (d>.01) 
-                d=min(d,distance(p, h));
-            h += yd;
-   		}
-    }
-
-    }
-    if (icharPos-4>=0) {// if (icharPos/4==15) {
+    {//if (icharPos-4>=0 ) {// if (icharPos/4==15) {
         // todo: END is causing artefact
-            if( icharPos/4>= fN-8) nextLine=4;
-        p.x+=4.;
-            // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn
-    //vec4 ca = mix(chars[frame*4],chars[frame*4+4],m);
-    vec4 ca = mix(chars[icharPos-4],chars[nextLine-4],m);
-    vec4 cb = mix(chars[icharPos-3],chars[nextLine-3],m);
-    vec4 cc = mix(chars[icharPos-2],chars[nextLine-2],m);
-    vec4 cd = mix(chars[icharPos-1],chars[nextLine-1],m);
-
-    for(float i1=0.0; i1<1.0; i1+=0.1) {
-        vec2 h=getPos(i1,ca,cb);
-        d=min(d,distance(p, h ));   
-        // try to spread out dots
-        vec2 yd=getPos(i1+.1,ca,cb) -h;
-        float y=length(yd)*11.;
-        yd/=y;
-       	for(float k=0.; k<y; k++) {
-            //if (d>.01) // uncomment when using thicker text
-                d=min(d,distance(p, h));
-            h += yd;
-   		}
-        
-        h=getPos(i1,cc,cd);
-        d=min(d,distance(p, h ));   
-        yd=getPos(i1+.1,cc,cd) -h;
-        y=length(yd)*11.;
-        yd/=y;
-       	for(float k=0.; k<y; k++) {
-    	    //if (d>.01) 
-                d=min(d,distance(p, h));
-            h += yd;
-   		}
+        if( nextLine==0) nextLine=-4;
+        p.x-=2.;
+    	d = min(d, doSomething(icharPos+4, nextLine+4, p, m));
     }
-
+       
+    if (icharPos-4>=0 ) {// if (icharPos/4==15) {
+        // todo: END is causing artefact
+        if( nextLine==-4) nextLine=4;
+        p.x+=4.;
+    	d = min(d, doSomething(icharPos-4, nextLine-4, p, m));
     }
 #endif
-	vec3 col = vec3(1.-smoothstep(d,.19,.3));
-	//vec3 col = vec3(1.-step(d,.09));
+   
+	//vec3 col = vec3(smoothstep(d,1.,smoothstep(d,.1,.18)));
+	vec3 col = vec3(smoothstep(d,.1,.18));
 	fragColor = vec4(col,1.0);
 }
