@@ -167,7 +167,8 @@
 // number of chars
 
 // change widthInChars accordingly
-#define widthInChars 7  
+// change widthInChars accordingly
+#define widthInChars 10
 vec4 chars[] = vec4[ (widthInChars * 5 +1) *4 ] ( 
  
     //_S _ O R A Y A LOVE _S		// final S to join seamlessly with first S
@@ -176,21 +177,14 @@ vec4 chars[] = vec4[ (widthInChars * 5 +1) *4 ] (
     //M O R P H I N G _
     //O F _
     //T E X T DOT SP SP		
-//  SP SP SP SP SP SP SP SP SP SP
-//  SP M O R P H SP SP SP SP
-//  SP M O R P H I N G SP 
-//  SP T H E S E LOVE LOVE LOVE SP
-//  SP W O R D S SP LOVE SP SP
-   
- R S D F G H J 
-  B M O R P H SP
-  C M O R P H I
-  D T H E S E LOVE 
-  E W O R D S SP 
-    
+  SP SP SP SP SP SP SP SP SP SP
+  SP M O R P H SP SP SP SP
+  SP M O R P H I N G SP 
+  SP T H E S E LOVE LOVE LOVE SP
+  SP W O R D S SP LOVE SP SP
+       
     END		// necessary
 );
-
 
 // calculate rate of change of length so as to plot more densely when rate of change is higher 
 // note, since the derivative is at a specific point, the density of dots drawn is only accurate close to the point where the derivative is calculated 
@@ -287,21 +281,17 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     if(nextLine>=nC*4) nextLine-=(nC*4);
     
     d = min(d, doSomething(icharPos,nextLine, p, m));
-    
-     
+         
 #define IMPROVED_DRAWING
 #ifdef IMPROVED_DRAWING
-    {//if (icharPos-4>=0 ) {// if (icharPos/4==15) {
-        // todo: END is causing artefact
-        if( nextLine==0) nextLine=-4;
+    if(xsav<widthInChars-1) {
         p.x-=2.;
     	d = min(d, doSomething(icharPos+4, nextLine+4, p, m));
+        p.x+=2.; // needs to be like this
     }
        
-    if (icharPos-4>=0 ) {// if (icharPos/4==15) {
-        // todo: END is causing artefact
-        if( nextLine==-4) nextLine=4;
-        p.x+=4.;
+    if(xsav>0) {
+        p.x+=2.;
     	d = min(d, doSomething(icharPos-4, nextLine-4, p, m));
     }
 #endif
