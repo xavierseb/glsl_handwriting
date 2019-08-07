@@ -167,7 +167,7 @@
 // number of chars
 
 // change widthInChars accordingly
-#define widthInChars 10  
+#define widthInChars 7  
 vec4 chars[] = vec4[ (widthInChars * 5 +1) *4 ] ( 
  
     //_S _ O R A Y A LOVE _S		// final S to join seamlessly with first S
@@ -176,12 +176,17 @@ vec4 chars[] = vec4[ (widthInChars * 5 +1) *4 ] (
     //M O R P H I N G _
     //O F _
     //T E X T DOT SP SP		
-    
- SP SP SP SP SP SP SP SP SP SP
-  SP M O R P H SP SP SP SP
-  SP M O R P H I N G SP 
-  SP T H E S E LOVE LOVE LOVE SP
-  SP W O R D S SP LOVE SP SP
+//  SP SP SP SP SP SP SP SP SP SP
+//  SP M O R P H SP SP SP SP
+//  SP M O R P H I N G SP 
+//  SP T H E S E LOVE LOVE LOVE SP
+//  SP W O R D S SP LOVE SP SP
+   
+ R S D F G H J 
+  B M O R P H SP
+  C M O R P H I
+  D T H E S E LOVE 
+  E W O R D S SP 
     
     END		// necessary
 );
@@ -262,13 +267,13 @@ float doSomething(int icharPos, int nextLine, vec2 p, float m) {
 
 const int speed=16;
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-    const int fN = chars.length()/4;
-    const int numLines = fN/widthInChars;
+    const int nC = chars.length()/4 -1;
+    const int numLines = nC/widthInChars;
     int fr = iFrame * speed/10;
-    int frame = (fr/100) %(fN-1);
+    int frame = (fr/100) %nC;
    
-    int charsAcross = (fN-1)/numLines ;
-    int curLine = frame%numLines;
+    int charsAcross = nC/numLines ;
+    int curLine = frame%(numLines);
     vec2 p = (2.*fragCoord.xy-iResolution.xy)/iResolution.x *float(charsAcross)
         			+ vec2(float(charsAcross),0.);
     int xsav = int(p.x/2.);
@@ -279,7 +284,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
     int icharPos = ( xsav + curLine*charsAcross )*4;
     int nextLine = icharPos+charsAcross*4;
-    if(nextLine>(fN-1)*4) nextLine=0;
+    if(nextLine>nC*4) nextLine-=(nC*4);
     
     d = min(d, doSomething(icharPos,nextLine, p, m));
     
