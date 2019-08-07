@@ -284,7 +284,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
     int icharPos = ( xsav + curLine*charsAcross )*4;
     int nextLine = icharPos+charsAcross*4;
-    if(nextLine>nC*4) nextLine-=(nC*4);
+    if(nextLine>=nC*4) nextLine-=(nC*4);
     
     d = min(d, doSomething(icharPos,nextLine, p, m));
     
