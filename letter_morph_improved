@@ -159,6 +159,10 @@
 #define rnd(p) vec4(.22*fract(sin(p/1.1)*100000.0),.582*fract(sin(p/1.2)*100000.0),.582*fract(sin(p/1.3)*100000.0),.2*fract(sin(p/1.4)*100000.0))
 #define rnd1(p) vec4(.2*fract(sin(p/1.5)*100000.0),.5842*fract(sin(p/1.6)*100000.0),.5842*fract(sin(p/1.7)*100000.0),.2*fract(sin(p/1.8)*100000.0))
 
+//#define AVERAGE
+//#define BETTER
+#define BEST
+
 // 2 bezier curves for each character, 
 // e.g. for the letter a, 
 // x coords of control points are vec4(.75,-1.32,-1.44,.75) = x-coords of curve first part of 'a', vec4(.77,1.95,-2.28,-.59) = x-coords of second curve to draw 'a'
@@ -183,6 +187,37 @@ vec4 getPos(float t, mat4 c)
     return c*vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
 }
 
+
+#ifdef BEST
+float doSomething(int icharPos, int nextLine, float m, vec2 p) {
+    mat4 My = transpose( mat4(
+        mix(chars[icharPos  ],chars[nextLine  ],m),
+        mix(chars[icharPos+1],chars[nextLine+1],m),
+   		mix(chars[icharPos+2],chars[nextLine+2],m),
+        mix(chars[icharPos+3],chars[nextLine+3],m) ));
+    float d=10.;
+    for(float i1=0.0; i1<1.0; i1+=0.1) {
+        vec4 h0 = getPos(i1   ,My);//,p.x);
+        vec4 h1 = getPos(i1+.1,My);
+        
+        d = min(d,distance(p, h0.xy ));   
+        // try to spread out dots
+        h1 -= h0;
+        float y = length(h1.xy)*10.;
+        for(float yconst=y, b1=i1; y>0.; y--, b1+=.1/yconst) 
+            //if (d>.01) // uncomment when using thicker text
+                d=min(d,distance(p, getPos(b1,My).xy));//distance(p, h0.xy));
+        
+        d = min(d,distance(p, h0.zw ));   
+        y = length(h1.zw)*10.;
+
+       	for(float yconst=y, b1=i1; y>0.; y--, b1+=.1/yconst)
+    	    //if (d>.01) 
+                d=min(d,distance(p, getPos(b1,My).zw));//distance(p, h0.zw));
+    }
+    return d;
+} 
+#else 
 float doSomething(int icharPos, int nextLine, float m, vec2 p) {
     mat4 My = transpose( mat4(
         mix(chars[icharPos  ],chars[nextLine  ],m),
@@ -213,58 +248,14 @@ float doSomething(int icharPos, int nextLine, float m, vec2 p) {
     }
     return d;
 }  
-
-float doSomethingForMe(int icharPos, int nextLine, float m, vec2 p) {
-    mat4 My = transpose( mat4(
-        mix(chars[icharPos  ],chars[nextLine  ],m),
-        mix(chars[icharPos+1],chars[nextLine+1],m),
-   		mix(chars[icharPos+2],chars[nextLine+2],m),
-        mix(chars[icharPos+3],chars[nextLine+3],m) ));
-    float d=10.;
-    for(float i1=0.0; i1<1.0; i1+=0.1) {
-        vec4 h0 = getPos(i1   ,My);//,p.x);
-        vec4 h1 = getPos(i1+.1,My);
-        
-        d = min(d,distance(p, h0.xy ));   
-        // try to spread out dots
-        h1 -= h0;
-        float y = length(h1.xy)*10.;
-        for(float yconst=y, b1=i1; y>0.; y--, b1+=.1/yconst) 
-            //if (d>.01) // uncomment when using thicker text
-                d=min(d,distance(p, getPos(b1,My).xy));//distance(p, h0.xy));
-        
-        d = min(d,distance(p, h0.zw ));   
-        y = length(h1.zw)*10.;
-
-       	for(float yconst=y, b1=i1; y>0.; y--, b1+=.1/yconst)
-    	    //if (d>.01) 
-                d=min(d,distance(p, getPos(b1,My).zw));//distance(p, h0.zw));
-    }
-    return d;
-}  
+#endif
 
 #define fAnimSmoothness 200.
 #define speed 60
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-    const int numCharsX4 = chars.length() -4;
-    float fr = float((iFrame*speed)/10)/fAnimSmoothness;
-    float m = fract(fr);
-    
-    vec2 p = (8.*fragCoord.xy-iResolution.xy*4.)/iResolution.y;    
-
-    int charPos = 4*(int(fr)%(numCharsX4/4));
-    
-    float d = doSomething(charPos,charPos+4,m,p);
-    //float d = doSomethingForMe(charPos,charPos+4,m,p);
-    
-	vec3 col = vec3(1.-step(d,.09));
-	fragColor = vec4(col,1.0);
-}
-
-
+#ifdef BETTER
 // more accurate, but less efficient
-void mainImage6( out vec4 fragColor, in vec2 fragCoord ){
+void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     const int numCharsX4 = chars.length() -4;
     float fr = float((iFrame*speed)/10)/fAnimSmoothness;
     float m = fract(fr);
@@ -290,3 +281,19 @@ void mainImage6( out vec4 fragColor, in vec2 fragCoord ){
 	vec3 col = 1.-vec3(step(d,.09));
 	fragColor = vec4(col,1.0);
 }
+#else
+void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+    const int numCharsX4 = chars.length() -4;
+    float fr = float((iFrame*speed)/10)/fAnimSmoothness;
+    float m = fract(fr);
+    
+    vec2 p = (8.*fragCoord.xy-iResolution.xy*4.)/iResolution.y;    
+
+    int charPos = 4*(int(fr)%(numCharsX4/4));
+    
+    float d = doSomething(charPos,charPos+4,m,p);
+    
+	vec3 col = vec3(1.-step(d,.09));
+	fragColor = vec4(col,1.0);
+}
+#endif
