@@ -204,7 +204,7 @@ float derivative(float t, int pos, float point)//, int density, float microstep 
     else return .1;
 }
 
-vec2 getPos(float t, vec4 c1, vec4 c2)
+vec2 getPos(float t, vec4 c1, vec4 c2)//, float x)
 {    
     float t1 = 1.-t; 
        
@@ -213,6 +213,9 @@ vec2 getPos(float t, vec4 c1, vec4 c2)
     
     //return vec2(x[0]+x[1]+x[2]+x[3],y[0]+y[1]+y[2]+y[3]);
     return vec2(dot(c1,n), dot(c2,n));
+  //  float px=dot(c1,n);  // these 3 lines instead of above line, performance actually degraded!!
+  //  if(abs(px-x)<.01) return vec2(px, dot(c2,n));
+  //  else return vec2(10.);
     
     // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]
     // original 
@@ -233,7 +236,7 @@ float doSomething(int icharPos, int nextLine, vec2 p, float m) {
     vec4 cd = mix(chars[icharPos+3],chars[nextLine+3],m);
     float d=10.;
     for(float i1=0.0; i1<1.0; i1+=0.1) {
-        vec2 h=getPos(i1,ca,cb);
+        vec2 h=getPos(i1,ca,cb);//,p.x);
         d=min(d,distance(p, h ));   
         // try to spread out dots
         vec2 yd=getPos(i1+.1,ca,cb) -h;
