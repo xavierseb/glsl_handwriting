@@ -181,18 +181,19 @@ vec4 chars[] = vec4[ (widthInChars * 5 +1) *4 ] (
 vec4 getPos(float t, mat4 c)
 {    
     float t1 = 1.-t;   
-    return transpose(c)*vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
+    return c*vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
 }
 
-float doSomething(int icharPos, int nextLine, vec2 p, float m) {
-    vec4 ca = mix(chars[icharPos  ],chars[nextLine  ],m);
-    vec4 cb = mix(chars[icharPos+1],chars[nextLine+1],m);
-    vec4 cc = mix(chars[icharPos+2],chars[nextLine+2],m);
-    vec4 cd = mix(chars[icharPos+3],chars[nextLine+3],m);
+float doSomething(int icharPos, int nextLine, float m, vec2 p) {
+    mat4 My = transpose( mat4(
+        mix(chars[icharPos  ],chars[nextLine  ],m),
+        mix(chars[icharPos+1],chars[nextLine+1],m),
+   	mix(chars[icharPos+2],chars[nextLine+2],m),
+        mix(chars[icharPos+3],chars[nextLine+3],m) ));
     float d=10.;
     for(float i1=0.0; i1<1.0; i1+=0.1) {
-        vec4 h0 = getPos(i1   ,mat4(ca,cb,cc,cd));//,p.x);
-        vec4 h1 = getPos(i1+.1,mat4(ca,cb,cc,cd));
+        vec4 h0 = getPos(i1   ,My);//,p.x);
+        vec4 h1 = getPos(i1+.1,My);
         
         d = min(d,distance(p, h0.xy ));   
         // try to spread out dots
