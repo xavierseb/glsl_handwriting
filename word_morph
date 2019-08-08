@@ -284,16 +284,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
          
 #define IMPROVED_DRAWING
 #ifdef IMPROVED_DRAWING
-    if(xsav<widthInChars-1) {
-        p.x-=2.;
-    	d = min(d, doSomething(icharPos+4, nextLine+4, p, m));
-        p.x+=2.; // needs to be like this
-    }
+	#define ADJ_CHAR vec2(2.,0.)
+    if(xsav<widthInChars-1) 
+        d = min(d, doSomething(icharPos+4, nextLine+4, p -ADJ_CHAR, m));
        
-    if(xsav>0) {
-        p.x+=2.;
-    	d = min(d, doSomething(icharPos-4, nextLine-4, p, m));
-    }
+    if(xsav>0) 
+        d = min(d, doSomething(icharPos-4, nextLine-4, p +ADJ_CHAR, m));
 #endif
    
 	//vec3 col = vec3(smoothstep(d,1.,smoothstep(d,.1,.18)));
