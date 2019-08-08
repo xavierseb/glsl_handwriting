@@ -166,8 +166,6 @@
 // note: combining mismatched letters can make other interesting shapes.
 // number of chars
 
-// change widthInChars accordingly
-// change widthInChars accordingly
 #define widthInChars 10
 vec4 chars[] = vec4[ (widthInChars * 5 +1) *4 ] ( 
  
@@ -176,57 +174,27 @@ vec4 chars[] = vec4[ (widthInChars * 5 +1) *4 ] (
     //SP _ I N T E R E S T I N G _    // display first char longer by doubling up
     //M O R P H I N G _
     //O F _
-    //T E X T DOT SP SP		
+    //T E X T DOT SP SP	
+    
   SP SP SP SP SP SP SP SP SP SP
   SP M O R P H SP SP SP SP
   SP M O R P H I N G SP 
   SP T H E S E LOVE LOVE LOVE SP
   SP W O R D S SP LOVE SP SP
        
-    END		// necessary
+    END		
 );
-
-// calculate rate of change of length so as to plot more densely when rate of change is higher 
-// note, since the derivative is at a specific point, the density of dots drawn is only accurate close to the point where the derivative is calculated 
-// so you have to hand tune the variables accordingly.
-float derivative(float t, int pos, float point)//, int density, float microstep )
-{
-    // position of character in chars[], corresponding to the current screen frame count iFrame previously drawn, staggered with factor iFrame%297
-    vec4 x = mix(chars[2*pos], chars[2*pos+4], point);//chars[2*pos];//2*pos]+rnd(p) * messiness;
-    vec4 y = mix(chars[2*pos+1]+.5, chars[2*pos+5]+.5, point);//2*pos+1]+rnd1(p) * messiness;
-    //float t = (float(iFrame%density)+microstep)/float(density);
-    float t1 = 1.-t;
-    // derivative of x(t) and y(t) with respect to t
-    float dxdt = t1* ( 2.*x[1]+x[2]*(1.+2.*t-t*t)+x[3] + t1*(-3.*x[0]+x[1]*(1.-4.*t)+2.*t*x[2] ) ) - t*(2.*x[1]+x[2]*(1.+t)+x[3]) ;
-    float dydt = t1* ( 2.*y[1]+y[2]*(1.+2.*t-t*t)+y[3] + t1*(-3.*y[0]+y[1]*(1.-4.*t)+2.*t*y[2] ) ) - t*(2.*y[1]+y[2]*(1.+t)+y[3] );
-    float rate = pow(dxdt*dxdt+dydt*dydt, .5);
-    if ( rate>0. ) return .1/rate;
-    else return .1;
-}
 
 vec2 getPos(float t, vec4 c1, vec4 c2)//, float x)
 {    
     float t1 = 1.-t; 
-       
-    //optimized , can this be reduced further?
     vec4 n = vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
     
-    //return vec2(x[0]+x[1]+x[2]+x[3],y[0]+y[1]+y[2]+y[3]);
-    return vec2(dot(c1,n), dot(c2,n));
-  //  float px=dot(c1,n);  // these 3 lines instead of above line, performance actually degraded!!
+  //  float px=dot(c1,n);
   //  if(abs(px-x)<.01) return vec2(px, dot(c2,n));
   //  else return vec2(10.);
-    
-    // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]
-    // original 
-    //float xt = t1*(t1*(t1*x[0]+t*x[1])+t*(t1*x[1]+t*x[2]))+t*(t1*(t1*x[1]+t*x[2])+t*(t1*x[2]+t*x[3]));
-    //float yt = t1*(t1*(t1*y[0]+t*y[1])+t*(t1*y[1]+t*y[2]))+t*(t1*(t1*y[1]+t*y[2])+t*(t1*y[2]+t*y[3]));
-    
-    //#define f(u,v) (t*u+t1*v)
-    //float xt = f(f(f(x[0],x[1]),f(x[1],x[2])),f(f(x[1],x[2]),f(x[2],x[3])));
-    //float yt = f(f(f(y[0],y[1]),f(y[1],y[2])),f(f(y[1],y[2]),f(y[2],y[3])));
-
-    // return  vec2(xt,yt);
+  
+      return vec2(dot(c1,n), dot(c2,n));
 }
 
 float doSomething(int icharPos, int nextLine, vec2 p, float m) {
