@@ -109,10 +109,10 @@
 #define z1_x vec4(0.,-1.3,-1.1,.9)
 #define z1_y vec4(0.,-1.5,-.9,-.9)
 
-#define love0_x vec4(0.,-.45,-2.,0.)
-#define love0_y vec4(.58,1.4,1.,-1.)
-#define love1_x vec4(0.,2.,.45,0.)
-#define love1_y vec4(-1.,1.,1.4,.58)
+#define love0_x vec4(0.,-.45,-2.,0.)*1.2
+#define love0_y vec4(.58,1.4,1.,-1.)*1.2
+#define love1_x vec4(0.,2.,.45,0.)*1.2
+#define love1_y vec4(-1.,1.,1.4,.58)*1.2
 #define qu0_x vec4(-.66,2.74,-.3,-.05)
 #define qu0_y vec4(2.9,3.35,1.6,.58)
 #define qu1_x vec4(-.05,.43,-.34,.03)
