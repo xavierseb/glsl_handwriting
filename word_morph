@@ -262,28 +262,25 @@ float doSomething(int icharPos, int nextLine, vec2 p, float m) {
     return d;
 }  
 
-const int speed=16;
+#define iAnimSmoothness 200
+#define fAnimSmoothness 200.
+const int speed=30;
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
-    const int nC = chars.length()/4 -1;
-    const int numLines = nC/widthInChars;
+    const int numCharsX4 = chars.length() -4;
     int fr = iFrame * speed/10;
-    int frame = (fr/100) %nC;
    
-    int charsAcross = nC/numLines ;
-    int curLine = frame%(numLines);
-    vec2 p = (2.*fragCoord.xy-iResolution.xy)/iResolution.x *float(charsAcross)
-        			+ vec2(float(charsAcross),0.);
+    int curLine = (fr/iAnimSmoothness) % (numCharsX4/(4*widthInChars));// frame%numLines;
+    vec2 p=((2.*fragCoord.xy-iResolution.xy)/iResolution.x +vec2(1.,0.))*float(widthInChars);
     int xsav = int(p.x/2.);
     p.x = mod(p.x,2.);
     
- 	float d = 10.;  
-    float m = fract(float(fr)/100.);
+    float m = fract(float(fr)/fAnimSmoothness);
 
-    int icharPos = ( xsav + curLine*charsAcross )*4;
-    int nextLine = icharPos+charsAcross*4;
-    if(nextLine>=nC*4) nextLine-=(nC*4);
+    int icharPos = ( xsav + curLine*widthInChars )*4;
+    int nextLine = icharPos+widthInChars*4;
+    if(nextLine>=numCharsX4) nextLine-=numCharsX4;
     
-    d = min(d, doSomething(icharPos,nextLine, p, m));
+    float d = min(10., doSomething(icharPos,nextLine, p, m));
          
 #define IMPROVED_DRAWING
 #ifdef IMPROVED_DRAWING
