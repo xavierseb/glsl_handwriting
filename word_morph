@@ -262,20 +262,18 @@ float doSomething(int icharPos, int nextLine, vec2 p, float m) {
     return d;
 }  
 
-#define iAnimSmoothness 200
 #define fAnimSmoothness 200.
 #define speed 30
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     const int numCharsX4 = chars.length() -4;
-    int fr = (iFrame*speed)/10;
+    float fr = float((iFrame*speed)/10)/fAnimSmoothness;
+    float m = fract(fr);
    
-    int curLine = (fr/iAnimSmoothness) % (numCharsX4/(4*widthInChars));// (fr/A)%numLines;
+    int curLine = int(fr) % (numCharsX4/(4*widthInChars));// (fr/A)%numLines;
     vec2 p=((2.*fragCoord.xy-iResolution.xy)/iResolution.x +vec2(1.,0.))*float(widthInChars);
     int xsav = int(p.x/2.);
     p.x = mod(p.x,2.);
     
-    float m = fract(float(fr)/fAnimSmoothness);
-
     int icharPos = ( xsav + curLine*widthInChars )*4;
     int nextLine = icharPos+widthInChars*4;
     if(nextLine>=numCharsX4) nextLine-=numCharsX4;
