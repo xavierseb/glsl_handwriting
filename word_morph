@@ -168,13 +168,6 @@
 
 #define widthInChars 10
 vec4 chars[] = vec4[ (widthInChars * 5 +1) *4 ] ( 
- 
-    //_S _ O R A Y A LOVE _S		// final S to join seamlessly with first S
-    
-    //SP _ I N T E R E S T I N G _    // display first char longer by doubling up
-    //M O R P H I N G _
-    //O F _
-    //T E X T DOT SP SP	
     
   SP SP SP SP SP SP SP SP SP SP
   SP M O R P H SP SP SP SP
@@ -185,16 +178,10 @@ vec4 chars[] = vec4[ (widthInChars * 5 +1) *4 ] (
     END		
 );
 
-vec2 getPos(float t, vec4 c1, vec4 c2)//, float x)
+vec4 getPos(float t, mat4 c)
 {    
-    float t1 = 1.-t; 
-    vec4 n = vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
-    
-  //  float px=dot(c1,n);
-  //  if(abs(px-x)<.01) return vec2(px, dot(c2,n));
-  //  else return vec2(10.);
-  
-      return vec2(dot(c1,n), dot(c2,n));
+    float t1 = 1.-t;   
+    return transpose(c)*vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
 }
 
 float doSomething(int icharPos, int nextLine, vec2 p, float m) {
@@ -204,24 +191,25 @@ float doSomething(int icharPos, int nextLine, vec2 p, float m) {
     vec4 cd = mix(chars[icharPos+3],chars[nextLine+3],m);
     float d=10.;
     for(float i1=0.0; i1<1.0; i1+=0.1) {
-        vec2 h=getPos(i1,ca,cb);//,p.x);
-        d=min(d,distance(p, h ));   
-        // try to spread out dots
-        vec2 yd=getPos(i1+.1,ca,cb) -h;
-        float y=length(yd)*11.;
-        yd/=y;
-        for(; y>0.; y--,h+=yd) 
-            //if (d>.01) // uncomment when using thicker text
-                d=min(d,distance(p, h));
+        vec4 h0 = getPos(i1   ,mat4(ca,cb,cc,cd));//,p.x);
+        vec4 h1 = getPos(i1+.1,mat4(ca,cb,cc,cd));
         
-        h=getPos(i1,cc,cd);
-        d=min(d,distance(p, h ));   
-        yd=getPos(i1+.1,cc,cd) -h;
-        y=length(yd)*11.;
-        yd/=y;
-       	for(; y>0; y--, h+=yd)
+        d = min(d,distance(p, h0.xy ));   
+        // try to spread out dots
+        vec2 yd = h1.xy - h0.xy;
+        float y = length(yd)*10.;
+        yd /= y;        //yd = normalize(yd)/10.;
+        for(; y>0.; y--,h0.xy+=yd) 
+            //if (d>.01) // uncomment when using thicker text
+                d=min(d,distance(p, h0.xy));
+        
+        d = min(d,distance(p, h0.zw ));   
+        yd = h1.zw - h0.zw;
+        y = length(yd)*10.;
+        yd /= y;
+       	for(; y>0.; y--, h0.zw+=yd)
     	    //if (d>.01) 
-                d=min(d,distance(p, h));
+                d=min(d,distance(p, h0.zw));
     }
     return d;
 }  
