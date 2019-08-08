@@ -269,7 +269,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     const int numCharsX4 = chars.length() -4;
     int fr = iFrame * speed/10;
    
-    int curLine = (fr/iAnimSmoothness) % (numCharsX4/(4*widthInChars));// frame%numLines;
+    int curLine = (fr/iAnimSmoothness) % (numCharsX4/(4*widthInChars));   // (fr/A)%numLines;
     vec2 p=((2.*fragCoord.xy-iResolution.xy)/iResolution.x +vec2(1.,0.))*float(widthInChars);
     int xsav = int(p.x/2.);
     p.x = mod(p.x,2.);
