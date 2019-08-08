@@ -210,22 +210,18 @@ float doSomething(int icharPos, int nextLine, vec2 p, float m) {
         vec2 yd=getPos(i1+.1,ca,cb) -h;
         float y=length(yd)*11.;
         yd/=y;
-       	for(float k=0.; k<y; k++) {
+        for(; y>0.; y--,h+=yd) 
             //if (d>.01) // uncomment when using thicker text
                 d=min(d,distance(p, h));
-            h += yd;
-   		}
         
         h=getPos(i1,cc,cd);
         d=min(d,distance(p, h ));   
         yd=getPos(i1+.1,cc,cd) -h;
         y=length(yd)*11.;
         yd/=y;
-       	for(float k=0.; k<y; k++) {
+       	for(; y>0; y--, h+=yd)
     	    //if (d>.01) 
                 d=min(d,distance(p, h));
-            h += yd;
-   	}
     }
     return d;
 }  
