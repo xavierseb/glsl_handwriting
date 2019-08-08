@@ -227,23 +227,16 @@ float doSomethingForMe(int icharPos, int nextLine, float m, vec2 p) {
         
         d = min(d,distance(p, h0.xy ));   
         // try to spread out dots
-        vec2 yd = h1.xy - h0.xy;
-        float y = length(yd)*10.;
-        yd /= y;        //yd = normalize(yd)/10.;
-        float hj=y;
-        float b1=i1;
-        float v = length(yd);
-        for(; y>0.; y--, b1+=.1/hj) 
+        h1 -= h0;
+        float y = length(h1.xy)*10.;
+        for(float yconst=y, b1=i1; y>0.; y--, b1+=.1/yconst) 
             //if (d>.01) // uncomment when using thicker text
                 d=min(d,distance(p, getPos(b1,My).xy));//distance(p, h0.xy));
         
         d = min(d,distance(p, h0.zw ));   
-        yd = h1.zw - h0.zw;
-        y = length(yd)*10.;
-        yd /= y;
-        hj=y;
-        b1=i1;
-       	for(; y>0.; y--, b1+=.1/hj)
+        y = length(h1.zw)*10.;
+
+       	for(float yconst=y, b1=i1; y>0.; y--, b1+=.1/yconst)
     	    //if (d>.01) 
                 d=min(d,distance(p, getPos(b1,My).zw));//distance(p, h0.zw));
     }
