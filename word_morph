@@ -265,6 +265,8 @@ float doSomething(int icharPos, int nextLine, vec2 p, float m) {
 #define fAnimSmoothness 200.
 #define speed 30
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
+    if(iFrameRate<30.) discard;
+
     const int numCharsX4 = chars.length() -4;
     float fr = float((iFrame*speed)/10)/fAnimSmoothness;
     float m = fract(fr);
