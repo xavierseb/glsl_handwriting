@@ -1,0 +1,14 @@
+GLSL handwriting 
+
+word_morph - morph a string
+animation - simulates text being written
+render_image - companion file for animation
+E - Elizabeth I signature
+E_glslsandbox - version to work on glslsandbox.com website
+data - data for E
+letter_morph_improved - newest version of morph of 1 letter at a time
+letter_morph - morphing 1 letter at a time
+
+animation2	- misc
+any_morph	-misc
+test	-misn
