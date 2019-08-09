@@ -164,12 +164,12 @@ vec4 chars[] = vec4[iW*2] (
     #endif
  );
 
-vec2 getPos(float t, vec4 x, vec4 y)
+vec2 getPos(float t, mat4x2 My)
 {
     float t1 = 1.-t; 
     // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]    
     vec4 n = vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);    
-    return vec2(dot(x,n), dot(y,n));
+    return My*n;
 }
 
 #define COLOR(r,g,b) vec4 color=vec4(1.-r,1.-g,1.-b,1.);
@@ -224,7 +224,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     float bpos = float(iFrame%idensity)/density;    //mod( float(iFrame), density)/density;
     // draw dot and fill in dots at density matching derivative
     for (float mstep=0.; mstep<1./density; mstep+=.05/density) {  
-        vec2 xy = getPos(bpos+mstep,x,y);       
+        vec2 xy = getPos(bpos+mstep, transpose(mat2x4(x,y)));       
     	spot += (thickness - clamp(length(xy-v),0.,thickness));
     }
     vec4 blob = spot*color*opacity;
