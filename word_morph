@@ -167,7 +167,8 @@
 // number of chars
 
 #define widthInChars 10
-vec4 chars[] = vec4[ (widthInChars * 5 +1) *4 ] ( 
+#define iNumLines 5
+vec4 chars[] = vec4[ widthInChars * iNumLines *4 +4 ] ( 
     
   SP SP SP SP SP SP SP SP SP SP
   SP M O R P H SP SP SP SP
@@ -184,7 +185,7 @@ vec4 getPos(float t, mat4 c)
     return c*vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
 }
 
-float doSomething(int icharPos, int nextLine, float m, vec2 p) {
+float doSomething(int icharPos, int nextLine, vec2 p, float m) {
     mat4 My = transpose( mat4(
         mix(chars[icharPos  ],chars[nextLine  ],m),
         mix(chars[icharPos+1],chars[nextLine+1],m),
@@ -224,7 +225,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     float fr = float((iFrame*speed)/10)/fAnimSmoothness;
     float m = fract(fr);
    
-    int curLine = int(fr) % (numCharsX4/(4*widthInChars));// (fr/A)%numLines;
+    int curLine = int(fr) % iNumLines;//(numCharsX4/(4*widthInChars));// (fr/A)%numLines;
     vec2 p=((2.*fragCoord.xy-iResolution.xy)/iResolution.x +vec2(1.,0.))*float(widthInChars);
     int xsav = int(p.x/2.);
     p.x = mod(p.x,2.);
