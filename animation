@@ -228,8 +228,8 @@ float derivative(float t, mat4x2 My)
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec2 disp = fragCoord.xy/iResolution.xy;
     const int i2W = 2*widthInChars;
-    int inumLines = (chars.length()/2-2)/2/widthInChars;
-    float fW = float(i2W/2);
+    const int inumLines = (chars.length()/4-1)/widthInChars;
+    const float fW = float(i2W/2);
 
 
     // jump from char to char (after drawing all the points of char, jump to next char)
