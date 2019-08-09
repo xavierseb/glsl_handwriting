@@ -176,6 +176,8 @@
  	);
 
 	//	uncomment to enable
+	//
+	#define DEFAULT_PEN
 	//#define OTHER_PEN
 	//#define EVIL
 	//
@@ -183,7 +185,6 @@
     // when adjusting this, adjust opacity too!
     // higher fps monitors to need density set higher to slow 
     // down drawing animation pace, not tested on high fps monitor
-	#define density 12.
 	#define idensity 12
 	// messiness  0.0 - 2.0
 	//#define messiness .79 
@@ -244,6 +245,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     const int i2W = 2*widthInChars;
     const int inumLines = (chars.length()/4-1)/widthInChars;
     const float fW = float(i2W/2);
+    const float density = float(idensity);
 
 
     // jump from char to char (after drawing all the points of char, jump to next char)
