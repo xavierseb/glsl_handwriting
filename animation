@@ -252,14 +252,32 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     
     float bpos = float(iFrame%idensity)/density;
 #ifdef OTHER_PEN
-    // every time you draw a dot for a char, work out derivative at that point to fill in gaps with density of dots according to derivative
-    float cstep=derivative(bpos,My);
-    if(cstep<.05) cstep=.05;
-    // draw dot and fill in dots at density matching derivative
-    for (float mstep=0.; mstep<1./density; mstep+=cstep/density) {  
-        vec2 xy = getPos(bpos+mstep,My);       
-    	spot += (thickness - clamp(length(xy-v),0.,thickness));
+    
+    for (float mstep=0.; mstep<1./density; mstep+=.1/density) {  
+        vec2 h0 = getPos(bpos+mstep,My);
+        vec2 h1 = getPos(bpos+mstep+1./density,My);
+    	float d=10.;
+        
+        d = min(d,distance(v, h0 ));   
+        h1 -= h0;
+        float y = length(h1)*10.;
+        for(float yconst=y, b1=bpos+mstep; y>0.; y--, b1+=.1/yconst) 
+            //if (d>.01) // uncomment when using thicker text
+                d=min(d,distance(v, getPos(b1,My).xy));
+        
+     	spot += (thickness - clamp(d,0.,thickness));
+       
     }
+    
+    // every time you draw a dot for a char, work out derivative at that point to fill in gaps with density of dots according to derivative
+//    float cstep=derivative(bpos,My);
+//    if(cstep<.05) cstep=.05;
+    // draw dot and fill in dots at density matching derivative
+//    for (float mstep=0.; mstep<1./density; mstep+=cstep/density) {  
+//        vec2 xy = getPos(bpos+mstep,My);       
+//    	spot += (thickness - clamp(length(xy-v),0.,thickness));
+//    }
+
 #else
     // draw dot and fill in dots at density matching derivative
     for (float mstep=0.; mstep<1./density; mstep+=.05/density) {  
