@@ -223,7 +223,7 @@ float derivative(float t, mat4x2 My)
     // vertical offset where writing happens
     #define yPos 1.5
     mat2 rot = mat2(cos(.38),sin(.38),-sin(.38),cos(.38));
-    mat2 italic = mat2(1.,0.,.4,1.0);
+    mat2 italic = mat2(.5,0.,.4,1.);
 
     //----------------------------------------------------
         
