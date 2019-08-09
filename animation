@@ -178,29 +178,14 @@ vec2 getPos(float t, mat4x2 My)
     return My*vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
 }
 
-#define OTHER_PEN
-#ifdef OTHER_PEN
-// calculate rate of change of length so as to plot more densely when rate of change is higher 
-// note, since the derivative is at a specific point, the density of dots drawn is only accurate close to the point where the derivative is calculated 
-// so you have to hand tune the variables accordingly.
-// actually, maybe this part was a bad idea
-float derivative(float t, mat4x2 My)
-{
-    // return .16;  // was doing this stupidity
-    float t1 = 1.-t;
-    // derivative of x(t) and y(t) with respect to t
-    float rate = length(My*vec4(-t1*t1, t1*t1-2.*t*t1, 2.*t*t1-t*t, t*t)/* *3.*/); 
-    if ( rate==0. ) return 1.;
-    return .08/rate;
-}
-#endif
-
 #define COLOR(r,g,b) vec4 color=vec4(1.-r,1.-g,1.-b,1.)
   
     //---------parameters to tinker with------------------
-    #ifdef OTHER_PEN
-    //#define EVIL
-    #endif
+	//
+	// uncomment to enable
+	//#define OTHER_PEN
+	//#define EVIL
+	//
     // density of dots drawn 1 - 60 this is related to fps, 
     // when adjusting this, adjust opacity too!
     // higher fps monitors to need density set higher to slow 
@@ -222,11 +207,35 @@ float derivative(float t, mat4x2 My)
     #define messiness .79 
     // vertical offset where writing happens
     #define yPos 1.5
-    mat2 rot = mat2(cos(.38),sin(.38),-sin(.38),cos(.38));
-    mat2 italic = mat2(.5,0.,.4,1.);
+	//	
+	// uncomment below to enable rotation matrix
+	//#define ROTATION	
+	#define ANGLE .35
+	mat2 rot = mat2(cos(ANGLE),sin(ANGLE),-sin(ANGLE),cos(ANGLE));
+	//
+	// uncomment below to enable skew matrix (italic)
+	//#define SKEW
+	mat2 italic = mat2(.5,0.,.4,1.);
+	//
+    //--------------------END-----------------------------
 
-    //----------------------------------------------------
-        
+
+#ifdef OTHER_PEN
+// calculate rate of change of length so as to plot more densely when rate of change is higher 
+// note, since the derivative is at a specific point, the density of dots drawn is only accurate close to the point where the derivative is calculated 
+// so you have to hand tune the variables accordingly.
+// actually, maybe this part was a bad idea
+float derivative(float t, mat4x2 My)
+{
+    // return .16;  // was doing this stupidity
+    float t1 = 1.-t;
+    // derivative of x(t) and y(t) with respect to t
+    float rate = length(My*vec4(-t1*t1, t1*t1-2.*t*t1, 2.*t*t1-t*t, t*t)/* *3.*/); 
+    if ( rate==0. ) return 1.;
+    return .08/rate;
+}
+#endif
+
         
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec2 disp = fragCoord.xy/iResolution.xy;
@@ -241,9 +250,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     
     float spot=0.;
     float mess=round(iTime/(hPos+1.));
-    mat4x2 My = // rot *   
-    		// italic *		
-    		transpose(mat2x4(
+    mat4x2 My = 
+        		#ifdef SKEW
+        		italic *
+        		#endif
+        		#ifdef ROTATION
+        		rot *
+        		#endif
+        		transpose(mat2x4(
     			chars[2*textPos]  +rnd(mess) * messiness,
     			chars[2*textPos+1]*iResolution.x/iResolution.y  +rnd1(mess) * messiness)); 
     // character drawn exactly the same as the getPos() function
@@ -283,7 +297,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
 #else
     // draw dot and fill in dots at density matching derivative
-    for (float mstep=0.; mstep<1./density; mstep+=.05/density) {  
+    #ifdef EVIL
+    for (float mstep=0.-2./density; mstep<1./density; mstep+=.05/density)  
+    #else
+    for (float mstep=0.; mstep<1./density; mstep+=.05/density)  
+    #endif
+    {
         vec2 xy = getPos(bpos+mstep,My);       
     	spot += (thickness - clamp(length(xy-v),0.,thickness));
     }
@@ -299,3 +318,4 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
         }
     }       
 }
+
