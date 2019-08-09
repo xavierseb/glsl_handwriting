@@ -222,6 +222,9 @@ float derivative(float t, mat4x2 My)
     #define messiness .79 
     // vertical offset where writing happens
     #define yPos 1.5
+    mat2 rot = mat2(cos(.38),sin(.38),-sin(.38),cos(.38));
+    mat2 italic = mat2(1.,0.,.4,1.0);
+
     //----------------------------------------------------
         
         
@@ -238,7 +241,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     
     float spot=0.;
     float mess=round(iTime/(hPos+1.));
-    mat4x2 My = transpose(mat2x4(
+    mat4x2 My = // rot *   
+    		// italic *		
+    		transpose(mat2x4(
     			chars[2*textPos]  +rnd(mess) * messiness,
     			chars[2*textPos+1]*iResolution.x/iResolution.y  +rnd1(mess) * messiness)); 
     // character drawn exactly the same as the getPos() function
