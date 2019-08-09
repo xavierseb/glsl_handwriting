@@ -198,6 +198,9 @@ float derivative(float t, mat4x2 My)
 #define COLOR(r,g,b) vec4 color=vec4(1.-r,1.-g,1.-b,1.)
   
     //---------parameters to tinker with------------------
+    #ifdef OTHER_PEN
+    //#define EVIL
+    #endif
     // density of dots drawn 1 - 60 this is related to fps, 
     // when adjusting this, adjust opacity too!
     // higher fps monitors to need density set higher to slow 
@@ -250,11 +253,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
         vec2 h1 = getPos(bpos+mstep+1./density,My);
     	float d=10.;
         
-        d = min(d,distance(v, h0 ));   
         h1 -= h0;
         float y = length(h1)*10.;
-        //for(float yconst=y, b1=bpos+mstep-2./density; y>0.; y--, b1+=.1/yconst) //evil
-        for(float yconst=y, b1=bpos+mstep; y>0.; y--, b1+=.1/yconst) 
+	#ifdef EVIL
+        for(float yconst=y, b1=bpos+mstep-2./density; y>0.; y--, b1+=.1/yconst) //evil
+	#else
+        for(float yconst=y, b1=bpos+mstep; y>0.; y-=2., b1+=.1/yconst) 
+	#endif
             //if (d>.01) // uncomment when using thicker text
                 d=min(d,distance(v, getPos(b1,My).xy));
         
