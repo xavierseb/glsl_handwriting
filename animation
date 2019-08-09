@@ -157,19 +157,11 @@
 #define rnd(p) vec4(.22*fract(sin(p/1.1)*122345.0),.58*fract(sin(p/1.2)*234567.0),.58*fract(sin(p/1.3)*333333.),.2*fract(sin(p/1.4)*222222.))
 #define rnd1(p) vec4(.2*fract(sin(p/1.5)*176543.0),.58*fract(sin(p/1.6)*456789.0),.58*fract(sin(p/1.7)*111111.),.2*fract(sin(p/1.8)*668766.))
 
-// how many chars fit across screen, change this and then adjust chars[] 
-// to corresponding size = fN*4*numLines+4
-// and change i2W as well, must be integer = 2*iW 
-#define fW 17.
-// below must be 2*fW , integer
-#define i2W 34
-
 // 2 bezier curves for each character, 
 // e.g. for the letter a, 
 // x coords of control points are vec4(.75,-1.32,-1.44,.75) = x-coords of curve first part of 'a', vec4(.77,1.95,-2.28,-.59) = x-coords of second curve to draw 'a'
 // y coords are vec4(.75,1.05,.32,1.), vec4(-.59,1.82,.78,-1.), ditto
 // note: combining mismatched letters can make other interesting shapes.
-//const float numLines=3.; // 3 lines below
 #define widthInChars 17
 // array of wise widthInChars * [number of lines] * 4 + 4
  vec4 chars[] = vec4[ widthInChars * 3 *4 +4] ( 
@@ -261,6 +253,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
         d = min(d,distance(v, h0 ));   
         h1 -= h0;
         float y = length(h1)*10.;
+        //for(float yconst=y, b1=bpos+mstep-2./density; y>0.; y--, b1+=.1/yconst) //evil
         for(float yconst=y, b1=bpos+mstep; y>0.; y--, b1+=.1/yconst) 
             //if (d>.01) // uncomment when using thicker text
                 d=min(d,distance(v, getPos(b1,My).xy));
