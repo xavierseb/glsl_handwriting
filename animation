@@ -203,13 +203,10 @@
     #define yPos 1.5
 	//	
 	// uncomment below to enable rotation matrix
-	//#define ROTATION	
-	#define ANGLE .35
-	mat2 rot = mat2(cos(ANGLE),sin(ANGLE),-sin(ANGLE),cos(ANGLE));
+	//#define ROT(angle) mat2(cos(angle),sin(angle),-sin(angle),cos(angle))
 	//
 	// uncomment below to enable skew matrix (italic)
-	//#define SKEW
-	mat2 italic = mat2(.5,0.,.4,1.);
+	//#define ITALIC mat2(.5,0.,.4,1.)
 	//
     //--------------------END-----------------------------
 
@@ -255,11 +252,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     float spot=0.;
     float mess=round(iTime/(hPos+1.));
     mat4x2 My = 
-        		#ifdef SKEW
-        		italic *
+        		#ifdef ITALIC
+        		ITALIC *
         		#endif
-        		#ifdef ROTATION
-        		rot *
+        		#ifdef ROT
+        		ROT(.35) *
         		#endif
         		transpose(mat2x4(
     			chars[2*textPos]  +rnd(mess) * messiness,
