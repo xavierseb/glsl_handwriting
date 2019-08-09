@@ -168,8 +168,7 @@ vec2 getPos(float t, mat4x2 My)
 {
     float t1 = 1.-t; 
     // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]    
-    vec4 n = vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);    
-    return My*n;
+    return My*vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);
 }
 
 #define COLOR(r,g,b) vec4 color=vec4(1.-r,1.-g,1.-b,1.);
