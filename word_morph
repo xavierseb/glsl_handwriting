@@ -166,6 +166,9 @@
 // note: combining mismatched letters can make other interesting shapes.
 // number of chars
 
+#define mat(t) mat4(cos(t),sin(t),0.,0.,-sin(t),cos(t),0.,0.,0.,0.,cos(t),sin(t),0.,0.,-sin(t),cos(t))
+//#define mat(t) mat4(t)
+
 #define widthInChars 10
 #define iNumLines 5
 vec4 chars[] = vec4[ widthInChars * iNumLines *4 +4 ] ( 
@@ -186,11 +189,14 @@ vec4 getPos(float t, mat4 c)
 }
 
 float doSomething(int icharPos, int nextLine, vec2 p, float m) {
-    mat4 My = transpose( mat4(
+    mat4 My = 
+        mat(.5*sin(6.28*sin(clamp(5.*m,0.,1.57))))*
+        transpose( mat4(
         mix(chars[icharPos  ],chars[nextLine  ],m),
         mix(chars[icharPos+1],chars[nextLine+1],m),
-   	mix(chars[icharPos+2],chars[nextLine+2],m),
+   		mix(chars[icharPos+2],chars[nextLine+2],m),
         mix(chars[icharPos+3],chars[nextLine+3],m) ));
+    //if( icharPos ==148 || icharPos==188) My *= (1.+.25*sin(6.28*sin(clamp(5.*m,0.,1.57))));//mat(.5*sin(6.28*sin(clamp(5.*m,0.,1.57))))*My;
     float d=10.;
     for(float i1=0.0; i1<1.0; i1+=0.1) {
         vec4 h0 = getPos(i1   ,My);//,p.x);
