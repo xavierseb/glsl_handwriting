@@ -119,7 +119,7 @@
 #define qu1_y vec4(-.42,-.59,-.63,-.44)
 
 // include scale and translate of raw chars which are by default 
-#define draw(a,b,c,d) a+1.,b,c+1.,d
+#define draw(a,b,c,d) a,b,c,d
 
 // combine x and y coordinates of 1st and 2nd curves needed to draw the char
 #define A draw(a0_x,a0_y,a1_x,a1_y),
@@ -234,7 +234,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     int curLine = int(fr) % iNumLines;//(numCharsX4/(4*widthInChars));// (fr/A)%numLines;
     vec2 p=((2.*fragCoord.xy-iResolution.xy)/iResolution.x +vec2(1.,0.))*float(widthInChars);
     int xsav = int(p.x/2.);
-    p.x = mod(p.x,2.);
+    p.x = mod(p.x,2.)-1.;
     
     int icharPos = ( xsav + curLine*widthInChars )*4;
     int nextLine = icharPos+widthInChars*4;
