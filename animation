@@ -178,8 +178,10 @@
 
 	//	uncomment to enable
 	//
-	#define DEFAULT_PEN
+	//#define DEFAULT_PEN
 	//#define OTHER_PEN
+	//
+	//
 	//#define EVIL
 	//
     // density of dots drawn 1 - 60 this is related to fps, 
