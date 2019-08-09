@@ -167,8 +167,9 @@
 	// y coords are vec4(.75,1.05,.32,1.), vec4(-.59,1.82,.78,-1.), ditto
 	// note: combining mismatched letters can make other interesting shapes.
 	#define widthInChars 17
+	#define numberOfLines 3
 	// array of wise widthInChars * [number of lines] * 4 + 4
- 	vec4 chars[] = vec4[ widthInChars * 3 *4 +4] ( 
+ 	vec4 chars[] = vec4[ widthInChars * numberOfLines *4 +4] ( 
     		D E A R SP  T R A C E Y LOVE SP L O O K 
     		A T SP M Y SP H A N D W R I T I N G 
    		H O P E SP Y O U SP L I K E SP I T SP 
@@ -240,13 +241,13 @@ float derivative(float t, mat4x2 My)
 void mainImage( out vec4 fragColor, in vec2 fragCoord ){
     vec2 disp = fragCoord.xy/iResolution.xy;
     const int i2W = 2*widthInChars;
-    const int inumLines = (chars.length()/4-1)/widthInChars;
+    //const int numberOfLines = (chars.length()/4-1)/widthInChars;
     const float fW = float(i2W/2);
     const float density = float(idensity);
 
 
     // jump from char to char (after drawing all the points of char, jump to next char)
-    int textPos = (iFrame%(i2W*idensity *inumLines))/idensity;    
+    int textPos = (iFrame%(i2W*idensity *numberOfLines))/idensity;    
     float hPos = float( (textPos%i2W)/2 );//float(((iFrame%(iW*2*idensity))/idensity)/2);
     
     float spot=0.;
@@ -312,7 +313,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord ){
 
     // vertical page feed
     if(iFrame%(i2W*idensity)==0) {
-    	if(iFrame%(i2W*idensity*inumLines)==0) fragColor=vec4(0.,0.,0.,1.);   
+    	if(iFrame%(i2W*idensity*numberOfLines)==0) fragColor=vec4(0.,0.,0.,1.);   
         else {
             disp.y -= (page_feed/fW);
             fragColor = texture(iChannel0,disp);
