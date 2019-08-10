@@ -143,7 +143,7 @@ uniform sampler2D backbuffer;
 #define de 18.
 #define thickness .15
 #define ASPECT resolution.x/resolution.y
-#define ch(m,n)  spot+=(thickness-clamp(length(getPos(fract(float(time*100.)/de),m,n*ASPECT)-v),0.,thickness)); blob=spot*color;
+#define ch(m,n)  spot+=(thickness-clamp(length(getPos(fract(float(time*100.)/de),m,n*ASPECT)-v),0.,thickness)); 
 
 vec2 getPos(float t, vec4 x, vec4 y)
 {
@@ -154,31 +154,32 @@ vec2 getPos(float t, vec4 x, vec4 y)
 	
 void main( void ){
     vec2 position = gl_FragCoord.xy/resolution.xy;
-    vec4 x,y;
     vec3 blob;
     vec2 v = (position-.5)*fW;    
     float bpos,mstep,spot=0.;
 	
-     ch(E01_x,E01_y)  ch(E02_x,E02_y)     ch(E03_x,E03_y)     ch(E04_x,E04_y)
-     ch(E05_x,E05_y)  ch(E06_x,E06_y)     ch(E07_x,E07_y)     ch(E08_x,E08_y)
-     ch(E09_x,E09_y)  ch(E10_x,E10_y)     ch(E11_x,E11_y)     ch(E12_x,E12_y)
-     ch(E13_x,E13_y)  ch(E14_x,E14_y)     ch(E15_x,E15_y)     ch(E16_x,E16_y)
-     ch(E17_x,E17_y)  ch(E18_x,E18_y)     ch(E19_x,E19_y)     ch(E20_x,E20_y)    
-     ch(E21_x,E21_y)  ch(E22_x,E22_y)     ch(E23_x,E23_y)     ch(E24_x,E24_y)
-     ch(E25_x,E25_y)  ch(E26_x,E26_y)     ch(E27_x,E27_y)     ch(E28_x,E28_y)
-     ch(E29_x,E29_y)  ch(E30_x,E30_y)     ch(E31_x,E31_y)     ch(E32_x,E32_y)
-     ch(E33_x,E33_y)  ch(E34_x,E34_y)     ch(E35_x,E35_y)     ch(E36_x,E36_y)
-     ch(E37_x,E37_y)  ch(E38_x,E38_y)     ch(E39_x,E39_y)     ch(E40_x,E40_y)    
-     ch(E41_x,E41_y)  ch(E42_x,E42_y)     ch(E43_x,E43_y)     ch(E44_x,E44_y)
+     ch(E01_x,E01_y) ch(E02_x,E02_y) ch(E03_x,E03_y) ch(E04_x,E04_y) ch(E05_x,E05_y)  
+     ch(E06_x,E06_y) ch(E07_x,E07_y) ch(E08_x,E08_y)
+     ch(E09_x,E09_y)  ch(E10_x,E10_y) ch(E11_x,E11_y) ch(E12_x,E12_y)
+     ch(E13_x,E13_y)  ch(E14_x,E14_y) ch(E15_x,E15_y) ch(E16_x,E16_y)
+     ch(E17_x,E17_y)  ch(E18_x,E18_y) ch(E19_x,E19_y) ch(E20_x,E20_y)    
+     ch(E21_x,E21_y)  ch(E22_x,E22_y) ch(E23_x,E23_y) ch(E24_x,E24_y)
+     ch(E25_x,E25_y)  ch(E26_x,E26_y) ch(E27_x,E27_y) ch(E28_x,E28_y)
+     ch(E29_x,E29_y)  ch(E30_x,E30_y) ch(E31_x,E31_y) ch(E32_x,E32_y)
+     ch(E33_x,E33_y)  ch(E34_x,E34_y) ch(E35_x,E35_y) ch(E36_x,E36_y)
+     ch(E37_x,E37_y)  ch(E38_x,E38_y) ch(E39_x,E39_y) ch(E40_x,E40_y)    
+     ch(E41_x,E41_y)  ch(E42_x,E42_y) ch(E43_x,E43_y) ch(E44_x,E44_y)
      ch(E45_x,E45_y)  ch(E46_x,E46_y)    
 #ifdef QUEEN
      ch(E47_x,E47_y)     ch(E48_x,E48_y)
 #endif
-    	    
+    	
+	blob=spot*color; 
+	
 	float col = 0.0;
-	col += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 20.0 );
-	col += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );
-	col += sin( position.x * sin( time / 5.0 ) * 20.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );
+	col += sin( position.x * cos( time / 15.0 ) * 20.0 ) + cos( position.y * cos( time / 15.0 ) * 50.0 );
+	col += sin( position.y * sin( time / 10.0 ) * 10.0 ) + cos( position.x * sin( time / 25.0 ) * 10.0 );
+	col += sin( position.x * sin( time / 5.0 ) * 5.0 ) + sin( position.y * sin( time / 35.0 ) * 20.0 );
 	col *= sin( time / 10.0 ) * 0.5;
 
     gl_FragColor = vec4(blob,1.) + texture2D(backbuffer,position) /* *fadeout*/  ; 
