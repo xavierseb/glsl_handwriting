@@ -10,7 +10,7 @@ uniform sampler2D backbuffer;
 //
 // Xavierseb 2019
 
-//#define QUEEN
+#define QUEEN
 
 // Elizabeth R I
 #define E01_x vec4(-5.8,-6.3,-6.6,-7.05)
@@ -141,12 +141,12 @@ uniform sampler2D backbuffer;
 #define iW 46
 #endif
 
-#define color vec4(.3,.4,.5,1.)   
-#define density 14.
+#define color vec3(.93,.4,.5)   
+#define de 18.
 #define thickness .15
-#define opacity  2.
 #define c(u,v) chars[u]=v;
-#define ch(u) 	v=vec2(disp-.5)*fW;bpos = mod( float(time*100.), density)/density; for (float mstep=0.; mstep<1./density; mstep+=32./density) {  vec2 xy = getPos(bpos+mstep,chars[u],chars[u+1]*resolution.x/resolution.y);       	spot += (thickness - clamp(length(xy-v),0.,thickness));   }    blob = spot*color*opacity;
+#define ASPECT resolution.x/resolution.y
+#define ch(m,n)  spot+=(thickness-clamp(length(getPos(fract(float(time*100.)/de),m,n*ASPECT)-v),0.,thickness)); blob=spot*color;
 
 vec2 getPos(float t, vec4 x, vec4 y)
 {
@@ -154,18 +154,16 @@ vec2 getPos(float t, vec4 x, vec4 y)
     vec4 n = vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);    
     return vec2(dot(x,n), dot(y,n));
 }
-
-#ifdef QUEEN
-vec4 chars[96];
-#else
-vec4 chars[92];
-#endif
 	
 void main( void ){
-    vec2 disp = gl_FragCoord.xy/resolution.xy;
-     c( 0,E01_x) c( 1,E01_y)     c( 2,E02_x) c( 3,E02_y)     c( 4,E03_x) c( 5,E03_y)     c( 6,E04_x) c( 7,E04_y)
-     c( 8,E05_x) c( 9,E05_y)     c(10,E06_x) c(11,E06_y)     c(12,E07_x) c(13,E07_y)     c(14,E08_x) c(15,E08_y)
-     c(16,E09_x) c(17,E09_y)     c(18,E10_x) c(19,E10_y)     c(20,E11_x) c(21,E11_y)     c(22,E12_x) c(23,E12_y)
+    vec2 position = gl_FragCoord.xy/resolution.xy;
+    vec4 x,y;
+    vec3 blob;
+    vec2 v = (position-.5)*fW;    
+    float bpos,mstep,spot=0.;
+     ch(E01_x,E01_y)  ch(E02_x,E02_y)     ch(E03_x,E03_y)     ch(E04_x,E04_y)
+     ch(E05_x,E05_y)  ch(E06_x,E06_y)     ch(E07_x,E07_y)     ch(E08_x,E08_y)
+     ch(E09_x,E09_y)     c(18,E10_x) c(19,E10_y)     c(20,E11_x) c(21,E11_y)     c(22,E12_x) c(23,E12_y)
      c(24,E13_x) c(25,E13_y)     c(26,E14_x) c(27,E14_y)     c(28,E15_x) c(29,E15_y)     c(30,E16_x) c(31,E16_y)
      c(32,E17_x) c(33,E17_y)     c(34,E18_x) c(35,E18_y)     c(36,E19_x) c(37,E19_y)     c(38,E20_x) c(39,E20_y)    
      c(40,E21_x) c(41,E21_y)     c(42,E22_x) c(43,E22_y)     c(44,E23_x) c(45,E23_y)     c(46,E24_x) c(47,E24_y)
@@ -179,33 +177,14 @@ void main( void ){
 	     #ifdef QUEEN
 	     c(92,E47_x) c(93,E47_y)     c(94,E48_x) c(95,E48_y)
 	     #endif
-    
-    float spot=0.;
-    vec4 x;
-    vec4 y;
-
-    vec2 v = (disp-.5)*fW;
-    
-    float bpos = mod( float(time*100.), density)/density;
-    vec4 blob = spot*color*opacity;
-	
-		ch( 0) ch( 2) ch( 4) ch( 6) ch( 8) ch(10) ch(12) ch(14) ch(16) ch(18) ch(20) ch(22)
-		ch(24) ch(26) ch(28) ch(30) ch(32) ch(34) ch(36) ch(38) ch(40) ch(42) ch(44) ch(46)
-		ch(48) ch(50) ch(52) ch(54) ch(56) ch(58) ch(60) ch(62) ch(64) ch(66) ch(68) ch(70)		
-		ch(72) ch(74) ch(76) ch(78) ch(80) ch(82) ch(84) ch(86) ch(88) ch(90)  
-			#ifdef QUEEN
-			ch(92) ch(94)
-			#endif
-    
-    vec2 position = ( gl_FragCoord.xy / resolution.xy )  / 4.0;
-
+    	    
 	float col = 0.0;
-	col += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );
+	col += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 20.0 );
 	col += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );
-	col += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );
+	col += sin( position.x * sin( time / 5.0 ) * 20.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );
 	col *= sin( time / 10.0 ) * 0.5;
 
-    gl_FragColor = blob + texture2D(backbuffer,disp) /* *fadeout*/  ; 
-    if (mod(time,6.)<.7) gl_FragColor = texture2D(backbuffer,disp)*vec4(.97,.96,.9,1.);
-    gl_FragColor += +vec4( vec3( col, col * 0.5, sin( col + time / 3.0 ) * 0.75 ), 1.0 )/360.;
+    gl_FragColor = vec4(blob,1.) + texture2D(backbuffer,position) /* *fadeout*/  ; 
+    if (mod(time,6.)<.7) gl_FragColor = texture2D(backbuffer,position)*vec4(.97,.96,.9,1.);
+    gl_FragColor += vec4( vec3( col, col * 0.5, sin( col + time / 3.0 ) * 0.75 ), 1.0 )/360.;
 }
