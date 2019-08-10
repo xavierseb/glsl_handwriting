@@ -180,15 +180,22 @@ void main( void ){
 	//col += sin( position.y * sin( time / 10.0 ) * 10.0 ) + cos( position.x * sin( time / 25.0 ) * 10.0 );
 	//col += sin( position.x * sin( time / 5.0 ) * 5.0 ) + sin( position.y * sin( time / 35.0 ) * 5.0 );
 	//col *= sin( time / 10.0 ) * 0.5;
-	col += sin( position.x * cos( time / 15.0 ) * 2.0 ) + cos( position.y * cos( time / 15.0 ) * 8.0 );
-	col += sin( position.y * sin( time / 10.0 ) * 4.0 ) + cos( position.x * sin( time / 25.0 ) * 6.0 );
-	col += sin( position.x * sin( time / 5.0 ) * 8.0 ) + sin( position.y * sin( time / 35.0 ) * 5.0 );
+	//col += sin( position.x * cos( time / 15.0 ) * 2.0 ) + cos( position.y * cos( time / 15.0 ) * 8.0 );
+	//col += sin( position.y * sin( time / 10.0 ) * 4.0 ) + cos( position.x * sin( time / 25.0 ) * 6.0 );
+	//col += sin( position.x * sin( time / 5.0 ) * 8.0 ) + sin( position.y * sin( time / 35.0 ) * 5.0 );
+	//col *= sin( time / 10.0 ) * 0.5;
+	float col = 0.0;
+	col += sin( position.x * cos( time / 15.80 ) * 2.0 ) + cos( position.y * cos( time / 15.0 ) * 8.0 );
+	col += sin( position.y * sin( time / 10.20 ) * 4.0 ) + cos( position.x * sin( time / 25.0 ) * 6.0 );
+	col += sin( position.x * sin( time / 5.40 ) * 8.0 ) + sin( position.y * sin( time / 35.0 ) * 5.0 );
 	col *= sin( time / 10.0 ) * 0.5;
+
+    gl_FragColor = vec4(blob,1.) + texture2D(backbuffer,position)*vec4(.97,.96,.97,1.) +vec4( vec3( col, col/2.*(1.+sin(col*3.)) , sin( col + time / 3.0 ) * 0.75 ), 1.0 )/86.;
 
     //gl_FragColor = vec4(blob,1.) + texture2D(backbuffer,position) /* *fadeout*/  ; 
     //if (mod(time,6.)<.7) gl_FragColor = texture2D(backbuffer,position)*vec4(.97,.96,.9,1.);
     //gl_FragColor += vec4( vec3( col, col * 0.5, sin( col + time / 3.0 ) * 0.75 ), 1.0 )/360.;
     
-    gl_FragColor = vec4(blob,1.) + texture2D(backbuffer,position)*vec4(.97,.96,.97,1.) +vec4( vec3( col, col * 0.5, sin( col + time / 3.0 ) * 0.75 ), 1.0 )/36.;
+    //gl_FragColor = vec4(blob,1.) + texture2D(backbuffer,position)*vec4(.97,.96,.97,1.) +vec4( vec3( col, col * 0.5, sin( col + time / 3.0 ) * 0.75 ), 1.0 )/36.;
     if(distance(mouse,vec2(.22,1.))<.07 ) gl_FragColor = vec4(vec3( col, col * 0.5, sin( col + time / 3.0 ) * 0.75 ), 1.0 );
 }
