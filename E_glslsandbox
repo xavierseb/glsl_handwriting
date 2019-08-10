@@ -141,9 +141,10 @@ uniform sampler2D backbuffer;
 
 #define color vec3(.93,.4,.5)   
 #define de 18.
-#define thickness .15
+// thickness 0.0 - 1.0
+#define thickness .2
 #define ASPECT resolution.x/resolution.y
-#define ch(m,n)  spot+=1.-smoothstep(length(getPos(fract(float(time*100.)/de),m,n*ASPECT)-v),0.01,.02); 
+#define ch(m,n)  spot+=1.-smoothstep(length(getPos(fract(float(time*100.)/de),m,n*ASPECT)-v)*(1.-thickness),0.01,.02); 
 
 vec2 getPos(float t, vec4 x, vec4 y)
 {
