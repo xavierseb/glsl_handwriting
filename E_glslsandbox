@@ -10,7 +10,7 @@ uniform sampler2D backbuffer;
 //
 // Xavierseb 2019
 
-#define QUEEN
+//#define QUEEN
 
 // Elizabeth R I
 #define E01_x vec4(-5.8,-6.3,-6.6,-7.05)
@@ -155,7 +155,11 @@ vec2 getPos(float t, vec4 x, vec4 y)
     return vec2(dot(x,n), dot(y,n));
 }
 
+#ifdef QUEEN
 vec4 chars[96];
+#else
+vec4 chars[92];
+#endif
 	
 void main( void ){
     vec2 disp = gl_FragCoord.xy/resolution.xy;
@@ -170,7 +174,11 @@ void main( void ){
      c(64,E33_x) c(65,E33_y)     c(66,E34_x) c(67,E34_y)     c(68,E35_x) c(69,E35_y)     c(70,E36_x) c(71,E36_y)
      c(72,E37_x) c(73,E37_y)     c(74,E38_x) c(75,E38_y)     c(76,E39_x) c(77,E39_y)     c(78,E40_x) c(79,E40_y)    
      c(80,E41_x) c(81,E41_y)     c(82,E42_x) c(83,E42_y)     c(84,E43_x) c(85,E43_y)     c(86,E44_x) c(87,E44_y)
-     c(88,E45_x) c(89,E45_y)     c(90,E46_x) c(91,E46_y)     c(92,E47_x) c(93,E47_y)     c(94,E48_x) c(95,E48_y)
+     c(88,E45_x) c(89,E45_y)     c(90,E46_x) c(91,E46_y)    
+	
+	     #ifdef QUEEN
+	     c(92,E47_x) c(93,E47_y)     c(94,E48_x) c(95,E48_y)
+	     #endif
     
     float spot=0.;
     vec4 x;
@@ -184,7 +192,10 @@ void main( void ){
 		ch( 0) ch( 2) ch( 4) ch( 6) ch( 8) ch(10) ch(12) ch(14) ch(16) ch(18) ch(20) ch(22)
 		ch(24) ch(26) ch(28) ch(30) ch(32) ch(34) ch(36) ch(38) ch(40) ch(42) ch(44) ch(46)
 		ch(48) ch(50) ch(52) ch(54) ch(56) ch(58) ch(60) ch(62) ch(64) ch(66) ch(68) ch(70)		
-		ch(72) ch(74) ch(76) ch(78) ch(80) ch(82) ch(84) ch(86) ch(88) ch(90) ch(92) ch(94)
+		ch(72) ch(74) ch(76) ch(78) ch(80) ch(82) ch(84) ch(86) ch(88) ch(90)  
+			#ifdef QUEEN
+			ch(92) ch(94)
+			#endif
     if( mod(float(time*10.), fW*density*2.)<.01 )gl_FragColor=vec4(0.,0.,0.,1.);
     else gl_FragColor = blob + texture2D(backbuffer,disp) /* *fadeout*/; 
 		if (mod(time,6.)<.7) gl_FragColor = texture2D(backbuffer,disp)*vec4(.97,.96,.9,1.);
