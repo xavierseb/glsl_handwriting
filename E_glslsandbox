@@ -9,27 +9,7 @@ uniform vec2 mouse;
 uniform vec2 resolution;
 uniform sampler2D backbuffer;
 
-
-void main2( void ) {
-
-	vec2 position = ( gl_FragCoord.xy / resolution.xy ) + mouse / 4.0;
-
-	float color = 0.0;
-	color += sin( position.x * cos( time / 99.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 10.0 );
-	color += sin( position.y * sin( time / 10.0 ) * 40.0 ) + cos( position.x * sin( time / 25.0 ) * 40.0 );
-	color += sin( position.x * sin( time / 5.0 ) * 10.0 ) + sin( position.y * sin( time / 35.0 ) * 80.0 );
-	color *= sin( time / 10.0 ) * 0.5;
-
-	gl_FragColor = vec4( vec3( color, color * 0.5, sin( color + time / 3.0 ) * 0.75 ), 1.0 );
-
-}
-
 // handwriting , Xavierseb 2019
-
-// bezier control points coordinates (x0,x1,x2,x3) and (y0,y1,y2,y3)
-// font char is drawn by bezier spline with control points at (x0,y0),(x1,y1),(x2,y2),(x3,y3)
-// todo: add flip/rotate/mirror/skewitalic
-// vec4( start_point, control_point_1, control_point_2, end_point)
 
 #define QUEEN
 
@@ -154,11 +134,6 @@ void main2( void ) {
 #define E46_y vec4(-2.8,-9.25,-3.53,-5.07)
 #endif
 
-// randomizing to emulate messy handwriting
-#define rnd(p) vec4(.22*fract(sin(p/1.1)*100000.0),.582*fract(sin(p/1.2)*100000.0),.582*fract(sin(p/1.3)*100000.0),.2*fract(sin(p/1.4)*100000.0))
-#define rnd1(p) vec4(.2*fract(sin(p/1.5)*100000.0),.5842*fract(sin(p/1.6)*100000.0),.5842*fract(sin(p/1.7)*100000.0),.2*fract(sin(p/1.8)*100000.0))
-
-// how many chars fit across screen, change this and then adjust chars[] to corresponding size = fN*4*numLines+4
 #ifdef QUEEN
 #define fW 48.
 #define iW 48
@@ -167,63 +142,23 @@ void main2( void ) {
 #define iW 46
 #endif
 
-// 2 bezier curves for each character, 
-// e.g. for the letter a, 
-// x coords of control points are vec4(.75,-1.32,-1.44,.75) = x-coords of curve first part of 'a', vec4(.77,1.95,-2.28,-.59) = x-coords of second curve to draw 'a'
-// y coords are vec4(.75,1.05,.32,1.), vec4(-.59,1.82,.78,-1.), ditto
-// note: combining mismatched letters can make other interesting shapes.
-/*
-vec4 chars[] = vec4[iW*2] ( 
-     E01_x, E01_y,     E02_x, E02_y,     E03_x, E03_y,     E04_x, E04_y,
-     E05_x, E05_y,     E06_x, E06_y,     E07_x, E07_y,     E08_x, E08_y,
-     E09_x, E09_y,     E10_x, E10_y,     E11_x, E11_y,     E12_x, E12_y,
-     E13_x, E13_y,     E14_x, E14_y,     E15_x, E15_y,     E16_x, E16_y,
-     E17_x, E17_y,     E18_x, E18_y,     E19_x, E19_y,     E20_x, E20_y,     
-     E21_x, E21_y,     E22_x, E22_y,     E23_x, E23_y,     E24_x, E24_y,
-     E25_x, E25_y,     E26_x, E26_y,     E27_x, E27_y,     E28_x, E28_y,
-     E29_x, E29_y,     E30_x, E30_y,     E31_x, E31_y,     E32_x, E32_y,
-     E33_x, E33_y,     E34_x, E34_y,     E35_x, E35_y,     E36_x, E36_y,
-     E37_x, E37_y,     E38_x, E38_y,     E39_x, E39_y,     E40_x, E40_y,     
-     E41_x, E41_y,     E42_x, E42_y,     E43_x, E43_y,     E44_x, E44_y,
-     E45_x, E45_y,     E46_x, E46_y
-    #ifdef QUEEN
-    ,     E47_x, E47_y,     E48_x, E48_y
-    #endif
- );*/
-
 vec2 getPos(float t, vec4 x, vec4 y)
 {
     float t1 = 1.-t; 
-    // bezier curve plot xout and yout ( x(t) and y(t) ) are in the range [0.0,1.0]    
     vec4 n = vec4(t1*t1*t1, 3.*t1*t1*t, 3.*t1*t*t, t*t*t);    
     return vec2(dot(x,n), dot(y,n));
 }
 
 #define COLOR(r,g,b) vec4 color=vec4(1.-r,1.-g,1.-b,1.);
     
-    //---------parameters to tinker with------------------
-    // density of dots drawn 1 - 60 this is related to fps, 
-    // when adjusting this, adjust opacity too!
-    // higher fps monitors to need density set higher to slow 
-    // down drawing animation pace, not tested on high fps monitor
 	#define density 12.
-	#define idensity 12
-	// messiness  0.0 - 2.0
-	//#define messiness .79 
-    // color = 0 to 1. for each r,g,b  opacity is ranged 0. to 1.
 	#define thickness .2
-    // adjust opacity and density together to find sweet spot
 	#define opacity  2.
-	//vec4 color =vec4(1.)-vec4( .3, .4,.5, 0.); 
 	COLOR(.3,.4,.5)
-	// #define fadeout vec4(0.998,.995,.985,1.)
-    //----------------------------------------------------
-    
-    
     #define c(u,v) chars[u]=v;
 
      vec4 chars[96];
-     
+#define ch(u) 	v=vec2(disp-.5)*fW;bpos = mod( float(time*100.), density)/density; for (float mstep=0.; mstep<1./density; mstep+=32./density) {  vec2 xy = getPos(bpos+mstep,chars[u],chars[u+1]*resolution.x/resolution.y);       	spot += (thickness - clamp(length(xy-v),0.,thickness));   }    blob = spot*color*opacity;
 	
 void main( void ){
     vec2 disp = gl_FragCoord.xy/resolution.xy;
@@ -240,25 +175,20 @@ void main( void ){
      c(80,E41_x) c(81,E41_y)     c(82,E42_x) c(83,E42_y)     c(84,E43_x) c(85,E43_y)     c(86,E44_x) c(87,E44_y)
      c(88,E45_x) c(89,E45_y)     c(90,E46_x) c(91,E46_y)     c(92,E47_x) c(93,E47_y)     c(94,E48_x) c(95,E48_y)
     
-    const int textPos	= //((time%(iW*idensity))/idensity) *2;   // 
-	int( mod(float(350), fW*density)/ density) *2;
-    
     float spot=0.;
-    vec4 x = chars[textPos];//+rnd(p) * messiness;
-    vec4 y = chars[textPos+1]*resolution.x/resolution.y;//+rnd1(p) * messiness; 
+    vec4 x;
+    vec4 y;
 
     vec2 v = (disp-.5)*fW;
     
-    float bpos = //float(iFrame%idensity)/density;    //
-	mod( float(time), density)/density;
-    // draw dot and fill in dots at density matching derivative
-    for (float mstep=0.; mstep<1./density; mstep+=32./density) {  
-        vec2 xy = getPos(bpos+mstep,x,y);       
-    	spot += (thickness - clamp(length(xy-v),0.,thickness));
-    }
+    float bpos = mod( float(time*100.), density)/density;
     vec4 blob = spot*color*opacity;
-             
-    //if(iFrame%(iW*idensity*2)==0) fragColor=vec4(0.,0.,0.,1.);   // 
-	if( mod(float(time), fW*density*2.)<.01 )gl_FragColor=vec4(0.,0.,0.,1.);
-    else gl_FragColor = blob + texture2D(backbuffer,disp) /* *fadeout*/; // blob+buffer
+	
+		ch( 0) ch( 2) ch( 4) ch( 6) ch( 8) ch(10) ch(12) ch(14) ch(16) ch(18) ch(20) ch(22)
+		ch(24) ch(26) ch(28) ch(30) ch(32) ch(34) ch(36) ch(38) ch(40) ch(42) ch(44) ch(46)
+		ch(48) ch(50) ch(52) ch(54) ch(56) ch(58) ch(60) ch(62) ch(64) ch(66) ch(68) ch(70)		
+		ch(72) ch(74) ch(76) ch(78) ch(80) ch(82) ch(84) ch(86) ch(88) ch(90) ch(92) ch(94)
+    if( mod(float(time*10.), fW*density*2.)<.01 )gl_FragColor=vec4(0.,0.,0.,1.);
+    else gl_FragColor = blob + texture2D(backbuffer,disp) /* *fadeout*/; 
+		//gl_FragColor=vec4(0.,0.,0.,1.);
 }
