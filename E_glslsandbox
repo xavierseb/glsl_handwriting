@@ -161,22 +161,22 @@ void main( void ){
     vec3 blob;
     vec2 v = (position-.5)*fW;    
     float bpos,mstep,spot=0.;
+	
      ch(E01_x,E01_y)  ch(E02_x,E02_y)     ch(E03_x,E03_y)     ch(E04_x,E04_y)
      ch(E05_x,E05_y)  ch(E06_x,E06_y)     ch(E07_x,E07_y)     ch(E08_x,E08_y)
-     ch(E09_x,E09_y)     c(18,E10_x) c(19,E10_y)     c(20,E11_x) c(21,E11_y)     c(22,E12_x) c(23,E12_y)
-     c(24,E13_x) c(25,E13_y)     c(26,E14_x) c(27,E14_y)     c(28,E15_x) c(29,E15_y)     c(30,E16_x) c(31,E16_y)
-     c(32,E17_x) c(33,E17_y)     c(34,E18_x) c(35,E18_y)     c(36,E19_x) c(37,E19_y)     c(38,E20_x) c(39,E20_y)    
-     c(40,E21_x) c(41,E21_y)     c(42,E22_x) c(43,E22_y)     c(44,E23_x) c(45,E23_y)     c(46,E24_x) c(47,E24_y)
-     c(48,E25_x) c(49,E25_y)     c(50,E26_x) c(51,E26_y)     c(52,E27_x) c(53,E27_y)     c(54,E28_x) c(55,E28_y)
-     c(56,E29_x) c(57,E29_y)     c(58,E30_x) c(59,E30_y)     c(60,E31_x) c(61,E31_y)     c(62,E32_x) c(63,E32_y)
-     c(64,E33_x) c(65,E33_y)     c(66,E34_x) c(67,E34_y)     c(68,E35_x) c(69,E35_y)     c(70,E36_x) c(71,E36_y)
-     c(72,E37_x) c(73,E37_y)     c(74,E38_x) c(75,E38_y)     c(76,E39_x) c(77,E39_y)     c(78,E40_x) c(79,E40_y)    
-     c(80,E41_x) c(81,E41_y)     c(82,E42_x) c(83,E42_y)     c(84,E43_x) c(85,E43_y)     c(86,E44_x) c(87,E44_y)
-     c(88,E45_x) c(89,E45_y)     c(90,E46_x) c(91,E46_y)    
-	
-	     #ifdef QUEEN
-	     c(92,E47_x) c(93,E47_y)     c(94,E48_x) c(95,E48_y)
-	     #endif
+     ch(E09_x,E09_y)  ch(E10_x,E10_y)     ch(E11_x,E11_y)     ch(E12_x,E12_y)
+     ch(E13_x,E13_y)  ch(E14_x,E14_y)     ch(E15_x,E15_y)     ch(E16_x,E16_y)
+     ch(E17_x,E17_y)  ch(E18_x,E18_y)     ch(E19_x,E19_y)     ch(E20_x,E20_y)    
+     ch(E21_x,E21_y)  ch(E22_x,E22_y)     ch(E23_x,E23_y)     ch(E24_x,E24_y)
+     ch(E25_x,E25_y)  ch(E26_x,E26_y)     ch(E27_x,E27_y)     ch(E28_x,E28_y)
+     ch(E29_x,E29_y)  ch(E30_x,E30_y)     ch(E31_x,E31_y)     ch(E32_x,E32_y)
+     ch(E33_x,E33_y)  ch(E34_x,E34_y)     ch(E35_x,E35_y)     ch(E36_x,E36_y)
+     ch(E37_x,E37_y)  ch(E38_x,E38_y)     ch(E39_x,E39_y)     ch(E40_x,E40_y)    
+     ch(E41_x,E41_y)  ch(E42_x,E42_y)     ch(E43_x,E43_y)     ch(E44_x,E44_y)
+     ch(E45_x,E45_y)  ch(E46_x,E46_y)    
+#ifdef QUEEN
+     ch(E47_x,E47_y)     ch(E48_x,E48_y)
+#endif
     	    
 	float col = 0.0;
 	col += sin( position.x * cos( time / 15.0 ) * 80.0 ) + cos( position.y * cos( time / 15.0 ) * 20.0 );
