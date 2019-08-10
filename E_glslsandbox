@@ -141,6 +141,13 @@ uniform sampler2D backbuffer;
 #define iW 46
 #endif
 
+#define color vec4(.3,.4,.5,1.)   
+#define density 14.
+#define thickness .15
+#define opacity  2.
+#define c(u,v) chars[u]=v;
+#define ch(u) 	v=vec2(disp-.5)*fW;bpos = mod( float(time*100.), density)/density; for (float mstep=0.; mstep<1./density; mstep+=32./density) {  vec2 xy = getPos(bpos+mstep,chars[u],chars[u+1]*resolution.x/resolution.y);       	spot += (thickness - clamp(length(xy-v),0.,thickness));   }    blob = spot*color*opacity;
+
 vec2 getPos(float t, vec4 x, vec4 y)
 {
     float t1 = 1.-t; 
@@ -148,16 +155,7 @@ vec2 getPos(float t, vec4 x, vec4 y)
     return vec2(dot(x,n), dot(y,n));
 }
 
-#define COLOR(r,g,b) vec4 color=vec4(1.-r,1.-g,1.-b,1.);
-    
-	#define density 12.
-	#define thickness .2
-	#define opacity  2.
-	COLOR(.3,.4,.5)
-    #define c(u,v) chars[u]=v;
-
-     vec4 chars[96];
-#define ch(u) 	v=vec2(disp-.5)*fW;bpos = mod( float(time*100.), density)/density; for (float mstep=0.; mstep<1./density; mstep+=32./density) {  vec2 xy = getPos(bpos+mstep,chars[u],chars[u+1]*resolution.x/resolution.y);       	spot += (thickness - clamp(length(xy-v),0.,thickness));   }    blob = spot*color*opacity;
+vec4 chars[96];
 	
 void main( void ){
     vec2 disp = gl_FragCoord.xy/resolution.xy;
@@ -189,5 +187,5 @@ void main( void ){
 		ch(72) ch(74) ch(76) ch(78) ch(80) ch(82) ch(84) ch(86) ch(88) ch(90) ch(92) ch(94)
     if( mod(float(time*10.), fW*density*2.)<.01 )gl_FragColor=vec4(0.,0.,0.,1.);
     else gl_FragColor = blob + texture2D(backbuffer,disp) /* *fadeout*/; 
-		if (mod(time,6.)<1.) gl_FragColor = texture2D(backbuffer,disp)*vec4(.97,.96,.9,1.);
+		if (mod(time,6.)<.7) gl_FragColor = texture2D(backbuffer,disp)*vec4(.97,.96,.9,1.);
 }
