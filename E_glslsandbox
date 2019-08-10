@@ -135,16 +135,13 @@ uniform sampler2D backbuffer;
 
 #ifdef QUEEN
 #define fW 48.
-#define iW 48
 #else
 #define fW 46.
-#define iW 46
 #endif
 
 #define color vec3(.93,.4,.5)   
 #define de 18.
 #define thickness .15
-#define c(u,v) chars[u]=v;
 #define ASPECT resolution.x/resolution.y
 #define ch(m,n)  spot+=(thickness-clamp(length(getPos(fract(float(time*100.)/de),m,n*ASPECT)-v),0.,thickness)); blob=spot*color;
 
