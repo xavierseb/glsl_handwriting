@@ -190,5 +190,5 @@ void main( void ){
 		ch(72) ch(74) ch(76) ch(78) ch(80) ch(82) ch(84) ch(86) ch(88) ch(90) ch(92) ch(94)
     if( mod(float(time*10.), fW*density*2.)<.01 )gl_FragColor=vec4(0.,0.,0.,1.);
     else gl_FragColor = blob + texture2D(backbuffer,disp) /* *fadeout*/; 
-		//gl_FragColor=vec4(0.,0.,0.,1.);
+		if (mod(time,6.)<1.) gl_FragColor = texture2D(backbuffer,disp)*vec4(.97,.96,.9,1.);
 }
